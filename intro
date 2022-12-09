@@ -14,3 +14,12 @@ rychlost => db už vý jak dotaz vyhodnotit
 bezpečnost => do parametrů se vloží jen to co tam má být
 
 Statement => pro bezparamerrové dotazy
+
+metoda na Statementu 
+--> exequteQuery() => vrátí ResultSet
+--> exequteUpdate() => vrátí počet ovlivněných řádků 
+
+ResultSet 
+--> funguje jako iterátor 
+--> next() - řekne zda je tam další a přepne na něj
+--> get'Datový typ'(index/jméno);
