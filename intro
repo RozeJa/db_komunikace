@@ -23,3 +23,7 @@ ResultSet
 --> funguje jako iterátor 
 --> next() - řekne zda je tam další a přepne na něj
 --> get'Datový typ'(index/jméno);
+
+PreparedStatement 
+--> to co umí Statement 
+--> set'Datový typ'(int, hodnota);
