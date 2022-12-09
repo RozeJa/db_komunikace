@@ -29,6 +29,8 @@ PreparedStatement
 --> to co umí Statement 
 --> set'Datový typ'(int, hodnota);
 
-preparedStatement(sql, PrepStatmt.RETURN_GENERATED_KEYS)
+preparedStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)
+.getGeneratedeys(); -> vrátí 
+
 /// auto inkrement - s každým vloženým řádkem se id zvětší
 
