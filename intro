@@ -1,0 +1,4 @@
+package java.sql
+DriverManager.getConnection(adresa, usr, pass)
+
+adresa -> jdbc:mysql://host:port/db
