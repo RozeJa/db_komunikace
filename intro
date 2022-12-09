@@ -2,3 +2,15 @@ package java.sql
 DriverManager.getConnection(adresa, usr, pass)
 
 adresa -> jdbc:mysql://host:port/db
+
+rozhraní
+Connection - spojení
+Statement - sql dotaz
+Prepared statement => připravený dotaz
+ResultSet => výsledek
+
+PreparedStatement => rychlost a bezpečnost
+rychlost => db už vý jak dotaz vyhodnotit
+bezpečnost => do parametrů se vloží jen to co tam má být
+
+Statement => pro bezparamerrové dotazy
