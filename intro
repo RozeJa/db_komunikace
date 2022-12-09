@@ -18,12 +18,13 @@ Statement => pro bezparamerrové dotazy
 metoda na Statementu 
 --> exequteQuery() => vrátí ResultSet
 --> exequteUpdate() => vrátí počet ovlivněných řádků 
+--> getGeneratedKeys();
 
 ResultSet 
 --> funguje jako iterátor 
 --> next() - řekne zda je tam další a přepne na něj
 --> get'Datový typ'(index/jméno);
 
-PreparedStatement 
---> to co umí Statement 
---> set'Datový typ'(int, hodnota);
+preparedStatement(sql, PrepStatmt.RETURN_GENERATED_KEYS)
+/// auto inkrement - s každým vloženým řádkem se id zvětší
+
