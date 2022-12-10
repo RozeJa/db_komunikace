@@ -1,10 +1,11 @@
 package data;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IDatabaseEntry {
    int getId();
    List<String> getPrimaryKey();
-   List<String> getUpdate();
+   Set<String> getUpdate();
    List<String> getCread();
 }

@@ -2,12 +2,14 @@ package data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class ADatabaseEntry implements IDatabaseEntry {
 
    protected int id;
+   protected boolean available;
    private List<String> primayKeyList;
-   protected List<String> upratedList;
+   protected Set<String> upratedSet;
    private List<String> createdList;
    protected Map<String, String> propertiesMap;
 
@@ -19,8 +21,8 @@ public abstract class ADatabaseEntry implements IDatabaseEntry {
       return primayKeyList;
    }
  
-   public List<String> getUpdate() {
-      return upratedList;
+   public Set<String> getUpdate() {
+      return upratedSet;
    }
  
    public List<String> getCread() {
