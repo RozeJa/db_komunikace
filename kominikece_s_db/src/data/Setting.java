@@ -7,8 +7,7 @@ import java.util.Map;
 public class Setting implements Iterable<String> {
     private static Setting instance;
 
-    // TODO:
-    public static final String db_url = "db_url"; 
+    public static final String db_url = "db_url", usr = "usr", pw = "pw"; 
 
     private Setting() {}
 
