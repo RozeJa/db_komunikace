@@ -1,0 +1,6 @@
+aplikace by měla:
+	- umožnit zobrazení
+	- přidání
+	- odebrání
+	- editaci
+	- filtrování 

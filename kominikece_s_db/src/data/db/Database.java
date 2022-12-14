@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import data.Setting;
 import data.db.models.ADatabaseEntry;
@@ -43,9 +42,8 @@ public class Database {
       }
   }
  
-  public ResultSet read(String table, List<WhereCondition> conditions) throws SQLException {
-    // TODO: odebrat "*" z sql dotazu a nahradit ji
-    StringBuilder sqlRequest = new StringBuilder("SELECT * FROM " + table); 
+  public ResultSet read(ADatabaseEntry type, List<WhereCondition> conditions) throws SQLException {
+    StringBuilder sqlRequest = new StringBuilder("SELECT " + type.getReadSQL() + " FROM " + type.getTable()); 
     
     if (!conditions.isEmpty()) {
       sqlRequest.append("WHERE");
@@ -61,37 +59,12 @@ public class Database {
   }
  
   public boolean create(String table, ADatabaseEntry entry) {
-    StringBuilder sqlRequest = new StringBuilder("INSERT INTO " + table);
-
-    sqlRequest.append("(");
-    int index = 1;
-    for (String string : entry.getCread()) {
-      sqlRequest.append(string);
-
-      if (index < entry.getCread().size())
-      sqlRequest.append(", ");
-      index++;
-    }
-
-    sqlRequest.append(") VALUES (");
-    for (int i = 0; i < entry.getCread().size(); i++) {
-      sqlRequest.append("?");
-
-      if (index < entry.getCread().size())
-        sqlRequest.append(", ");
-    }
-
-    sqlRequest.append(");");
+    String sqlRequest = "INSERT INTO " + table + entry.getCreateSQL();
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString())) {
       
-      index = 1;
-      for (String key : entry.getUpdate().keySet()) {
-        setPropety(ps, entry.getUpdate(), key, index);
-        index++;
-      }
       
-      return ps.executeUpdate() == 1;
+      return entry.fillCreateSQL(ps).executeUpdate() == 1;
     } catch (Exception e) {
       e.printStackTrace();
       return false;
@@ -99,34 +72,11 @@ public class Database {
   }
  
   public boolean update(String table, ADatabaseEntry entry) {
-    StringBuilder sqlRequest = new StringBuilder("UPDATE " + table + " SET");
-    
-    int index = 1;
-    for (String key : entry.getUpdate().keySet()) {
-      sqlRequest.append(key);
-      sqlRequest.append("= ? ");
-
-      if (index < entry.getUpdate().size())
-        sqlRequest.append(", ");
-      index++;
-    }
-
-    sqlRequest.append(" WHERE ");
-    sqlRequest.append(entry.getPrimaryKey());
-    sqlRequest.append(" LIMIT = 1;");
-  
-    //(id, uziv_jmeno, heslo, zegistrovan) VALUES (?, ?, ?, ?)
+    StringBuilder sqlRequest = new StringBuilder("UPDATE " + table + " SET" + entry.getUpdateSQL() + "WHERE " + entry.getPrimaryKey() + " LIMIT 1");
     
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString())) {
 
-      index = 1;
-      for (String key : entry.getUpdate().keySet()) {
-
-        setPropety(ps, entry.getUpdate(), key, index);
-        index++;
-      }
-
-      return ps.executeUpdate() == 1;
+      return entry.fillUpdateSQL(ps).executeUpdate() == 1;
     } catch (Exception e) {
       e.printStackTrace();
       return false;
@@ -134,7 +84,7 @@ public class Database {
   }
 
   public boolean delete(String table, ADatabaseEntry entry) {
-    String sqlRequest = "DELETE FROM " + table + "WHERE" + entry.getPrimaryKey() + "LIMIT = 1";
+    String sqlRequest = "DELETE FROM " + table + "WHERE" + entry.getPrimaryKey() + "LIMIT 1";
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest)) {
         ps.executeUpdate();
@@ -145,17 +95,5 @@ public class Database {
 
       return false;
     }
-  }
-
-  private void setPropety(PreparedStatement ps, Map<String, String> data, String key, int index) throws SQLException {
-    try {
-      ps.setDouble(index, Double.parseDouble(data.get(key)));
-    } catch (Exception e) {
-      try {
-        ps.setBoolean(index, ADatabaseEntry.parseBoolean(data.get(key)));
-      } catch (Exception ex) {
-        ps.setString(index, data.get(key));
-      }
-    } 
   }
 }

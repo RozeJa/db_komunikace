@@ -1,5 +1,7 @@
 package data.db.models;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,33 +12,32 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
 
    private Map<Integer, Category> availableCategories = new TreeMap<>();
 
-   public Improvement(int id, String name, double price, boolean available) {
-      createdList.add(Improvement.name);
-      createdList.add(Improvement.price);
+   private String nameVal;
+   private double priceVal;
 
-      properties.put(Improvement.name, name);
-      properties.put(Improvement.price, Double.toString(price));
 
-      this.available = available;
+   public Improvement(int id, String name, double price, boolean availableVal) {
+      nameVal = name;
+      priceVal = price;
+
+      this.availableVal = availableVal;
       this.id = id;
    }
 
    public void setPrice(double price) {
-      properties.put(Improvement.price, Double.toString(price));
-      updatedMap.put(Improvement.price, Double.toString(price));
+      priceVal = price;
    }
  
    public double getPrice() {
-      return Double.parseDouble(properties.get(Improvement.price));
+      return priceVal;
    }
  
    public void setName(String name) {
-      properties.put(Improvement.name, name);
-      updatedMap.put(Improvement.name, name);
+      nameVal = name;
    }
  
    public String getName() {
-      return properties.get(Improvement.name);
+      return nameVal;
    }
 
    public void addCategories(int key, Category categories) {
@@ -54,10 +55,47 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
    public Category getCategories(int id) {
       return availableCategories.get(id);
    }
+   
+   @Override
+   public String getCreateSQL() {
+       return "(" + name + ", " + price + ", " + available + ") VALUES (?, ?, ?)";
+   }
+
+   @Override
+   public String getReadSQL() {
+       return name + "," + price  + "," + available ;
+   }
+
+   @Override
+   public String getUpdateSQL() {
+       return name + " = ?, " + price  + " = ?," + available + " = ?";
+   }
+
+   @Override
+   public PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException {
+      return fill(ps);
+   }
+
+   @Override
+   public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
+      return fill(ps);
+   }
+
+   private PreparedStatement fill(PreparedStatement ps) throws SQLException {
+      ps.setString(1, nameVal);
+      ps.setDouble(2, priceVal);
+      ps.setBoolean(3, availableVal);
+      return ps;
+   }
 
    @Override
    public String getPrimaryKey() {
        return  ids + " == " + id;
+   }
+
+   @Override
+   public String getTable() {
+       return "Vylepseni";
    }
 
    @Override

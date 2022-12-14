@@ -14,7 +14,7 @@ public class WhereCondition {
         return this.oterator + " " + column + " " + operationOperator + " " + value; 
     }
 
-    enum Operator {
+    public enum Operator {
         AND("AND"), OR("OR"), NOT("NOT"), NON("");
         
         private String operator;
@@ -29,7 +29,7 @@ public class WhereCondition {
         }
     }
 
-    enum OperationOperator {
+    public enum OperationOperator {
         EQUAL("="), GREATER(">"), LESS("<"), NOTEQUAL("<>"), BETWEEN("BETWEEN"), LIKE("LIKE"), IN("IN");
 
         private String operationOperator;
