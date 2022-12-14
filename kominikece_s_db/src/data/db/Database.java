@@ -42,7 +42,7 @@ public class Database {
       }
   }
  
-  public ResultSet read(ADatabaseEntry type, List<WhereCondition> conditions) throws SQLException {
+  public ABuider read(ADatabaseEntry type, List<WhereCondition> conditions) throws SQLException {
     StringBuilder sqlRequest = new StringBuilder("SELECT " + type.getReadSQL() + " FROM " + type.getTable()); 
     
     if (!conditions.isEmpty()) {
@@ -55,7 +55,7 @@ public class Database {
 
     PreparedStatement ps = conection.prepareStatement(sqlRequest.toString());
 
-    return ps.executeQuery();
+    return getBuilder(ps.executeQuery(), type);
   }
  
   public boolean create(String table, ADatabaseEntry entry) {
