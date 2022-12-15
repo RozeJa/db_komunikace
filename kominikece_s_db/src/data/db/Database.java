@@ -248,7 +248,6 @@ public class Database {
           break;
         case SQLRequest.read:
           try {
-            read(request.getData(), request.getConditions());
             responce = new SQLResponce(read(request.getData(), request.getConditions()), true);
           } catch (Exception e) {
             responce = new SQLResponce(null, false);

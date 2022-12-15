@@ -46,9 +46,11 @@ public class MC_Database extends Database {
     }
 
 
-  //###################################################################//
+    //###################################################################//
 
-  private Map<Integer, Product> products = null;
-  private Map<Integer, Category> categories = null;
-  private Map<Integer, Improvement> improvements = null;
+    private Map<Integer, Product> products = null;
+    private Map<Integer, Category> categories = null;
+    private Map<Integer, Improvement> improvements = null;
+
+    
 }
