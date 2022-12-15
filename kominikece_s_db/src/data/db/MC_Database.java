@@ -1,8 +1,10 @@
 package data.db;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import data.Setting;
+import data.db.buildesr.ABuilder;
 import data.db.models.Category;
 import data.db.models.Improvement;
 import data.db.models.Product;
@@ -53,4 +55,66 @@ public class MC_Database extends Database {
     private Map<Integer, Improvement> improvements = null;
 
     
+    public Map<Integer, Product> getProducts() {
+        if (products == null) {
+            loadProducts();
+        }
+
+        return products;
+    }
+    public void addProduct(Product product) {
+        
+    }
+    public void updeteProduct(Product product) {
+
+    }
+    public void removeProduct(Product product) {
+        
+    }
+    public Product getProduct(Integer id) {
+        return null;
+    }
+
+
+    public Map<Integer, Category> getCategories() {
+        if (categories == null) {
+            loadCategories();
+        }
+
+        return categories;
+    }
+    public void addCategory(Category product) {
+        
+    }
+    public void updeteCategory(Category product) {
+
+    }
+    public void removeCategory(Category product) {
+        
+    }
+    public Category getCategory(Integer id) {
+        return null;
+    }
+
+
+    public Map<Integer, Improvement> getImprovements() {
+        if (improvements == null) {
+            loadImprevements();
+        }
+
+        return improvements;
+    }
+    public void addImprovement(Improvement product) {
+        
+    }
+    public void updeteImprovement(Improvement product) {
+
+    }
+    public void removeImprovement(Improvement product) {
+        
+    }
+    public Product getImprovement(Integer id) {
+        return null;
+    }
+
 }
