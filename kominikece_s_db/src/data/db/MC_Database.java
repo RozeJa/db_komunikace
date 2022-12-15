@@ -1,8 +1,16 @@
 package data.db;
 
+import java.util.Map;
+
 import data.Setting;
+import data.db.models.Category;
+import data.db.models.Improvement;
+import data.db.models.Product;
 
 public class MC_Database extends Database {
+
+  //###################################################################//
+  // Část pro singleton
 
     private static MC_Database db;
 
@@ -36,5 +44,11 @@ public class MC_Database extends Database {
     private MC_Database(Setting setting) {
         super(setting);
     }
+
+
+  //###################################################################//
+
+  private Map<Integer, Product> products = null;
+  private Map<Integer, Category> categories = null;
+  private Map<Integer, Improvement> improvements = null;
 }
-    
