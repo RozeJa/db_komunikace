@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import data.Setting;
+import data.db.buildesr.ABuilder;
 import data.db.models.ADatabaseEntry;
 
 public class Database {
@@ -42,7 +43,7 @@ public class Database {
       }
   }
  
-  public ABuider read(ADatabaseEntry type, List<WhereCondition> conditions) throws SQLException {
+  public ABuilder read(ADatabaseEntry type, List<WhereCondition> conditions) throws Exception {
     StringBuilder sqlRequest = new StringBuilder("SELECT " + type.getReadSQL() + " FROM " + type.getTable()); 
     
     if (!conditions.isEmpty()) {
@@ -58,6 +59,14 @@ public class Database {
     return getBuilder(ps.executeQuery(), type);
   }
  
+  private ABuilder getBuilder(ResultSet executeQuery, ADatabaseEntry type) throws Exception {
+    ABuilder builder = (ABuilder) Class.forName(type.getClass().getName() + "Builder").getConstructor().newInstance();
+
+    builder.setResultSet(executeQuery);
+
+    return builder;
+  }
+
   public boolean create(String table, ADatabaseEntry entry) {
     String sqlRequest = "INSERT INTO " + table + entry.getCreateSQL();
 
