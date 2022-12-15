@@ -74,6 +74,8 @@ public class MC_Database extends Database {
     public Product getProduct(Integer id) {
         return null;
     }
+    private void loadProducts() {
+    }
 
 
     public Map<Integer, Category> getCategories() {
@@ -94,6 +96,8 @@ public class MC_Database extends Database {
     }
     public Category getCategory(Integer id) {
         return null;
+    }    
+    private void loadCategories() {
     }
 
 
@@ -115,6 +119,8 @@ public class MC_Database extends Database {
     }
     public Product getImprovement(Integer id) {
         return null;
+    }
+    private void loadImprevements() {
     }
 
 }
