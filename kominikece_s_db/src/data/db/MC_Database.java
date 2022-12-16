@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import data.Setting;
-import data.db.buildesr.ABuilder;
 import data.db.models.ADatabaseEntry;
 import data.db.models.Category;
 import data.db.models.Improvement;

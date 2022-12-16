@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import data.Setting;
 import data.db.buildesr.ABuilder;
@@ -126,14 +128,14 @@ public class Database {
   protected Map<String, ?> create(ADatabaseEntry entry) {
     String sqlRequest = "INSERT INTO " + entry.getTable() + entry.getCreateSQL();
 
-    try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString(), PreparedStatement.RETURN_GENERATED_KEYS)) {
+    try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString(), Statement.RETURN_GENERATED_KEYS)) {
 
       entry.fillCreateSQL(ps).executeUpdate();
 
       return entry.getPrimaryKeyFromResultSet(ps.getGeneratedKeys());
     } catch (Exception e) {
       e.printStackTrace();
-      return null;
+      return new TreeMap<>();
     }
   }
 

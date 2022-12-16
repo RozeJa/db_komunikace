@@ -19,7 +19,13 @@ public abstract class ABuilder implements Iterable<ADatabaseEntry> {
             @Override
             public boolean hasNext() {
                 try {
-                    return rs.next();
+                    boolean hasNext = rs.next();
+
+                    if (!hasNext) {
+                        rs.close();
+                    }
+
+                    return hasNext;
                 } catch (Exception e) {
                     return false;
                 }

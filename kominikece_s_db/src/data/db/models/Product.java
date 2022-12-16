@@ -20,6 +20,7 @@ public class Product extends ADatabaseEntry implements Iterable<Improvement> {
      public Product(int id, String name, double price, int categoryId, boolean availableVal) {
           nameVal = name;
           priceVal = price;
+          this.categoryId = categoryId;
 
           this.availableVal = availableVal;
           this.id = id;
