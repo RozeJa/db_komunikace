@@ -63,7 +63,7 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
 
    @Override
    public String getReadSQL() {
-       return name + "," + price  + "," + available ;
+       return ids + "," + name + "," + price  + "," + available ;
    }
 
    @Override
@@ -82,9 +82,10 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
    }
 
    private PreparedStatement fill(PreparedStatement ps) throws SQLException {
-      ps.setString(1, nameVal);
-      ps.setDouble(2, priceVal);
-      ps.setBoolean(3, availableVal);
+      ps.setInt(1, id);
+      ps.setString(2, nameVal);
+      ps.setDouble(3, priceVal);
+      ps.setBoolean(4, availableVal);
       return ps;
    }
 

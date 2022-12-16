@@ -77,7 +77,7 @@ public class Database {
    * @return vrací instanci Buildru pro konkrétní model. Jen nutné dodržet jmenou konvenci: model = Model, builder = ModelBuilder
    * @throws Exception pokud se nepodaří vytvořit Builder
    */
-  public ABuilder read(ADatabaseEntry type, List<WhereCondition> conditions) throws Exception {
+  protected ABuilder read(ADatabaseEntry type, List<WhereCondition> conditions) throws Exception {
     StringBuilder sqlRequest = new StringBuilder("SELECT " + type.getReadSQL() + " FROM " + type.getTable()); 
     
     if (!conditions.isEmpty()) {
@@ -113,7 +113,7 @@ public class Database {
    * @param entry instance, musí rozšiřovat ADatabaseEntry
    * @return vrací booleanovou hodnotu, zda se zapsání podařilo
    */
-  public boolean create(ADatabaseEntry entry) {
+  protected boolean create(ADatabaseEntry entry) {
     String sqlRequest = "INSERT INTO " + entry.getTable() + entry.getCreateSQL();
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString())) {
@@ -130,7 +130,7 @@ public class Database {
    * @param entry instance modelu, která obsahuje data
    * @return vrací booleanovou hodnotu, zda se zapsání podařilo
    */
-  public boolean update(ADatabaseEntry entry) {
+  protected boolean update(ADatabaseEntry entry) {
     StringBuilder sqlRequest = new StringBuilder("UPDATE " + entry.getTable() + " SET" + entry.getUpdateSQL() + "WHERE " + entry.getPrimaryKey() + " LIMIT 1");
     
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString())) {
@@ -147,7 +147,7 @@ public class Database {
    * @param entry data, která se mají odebrat
    * @return vrací booleanovou hodnotu, zda se smazání podařilo
    */
-  public boolean delete(ADatabaseEntry entry) {
+  protected boolean delete(ADatabaseEntry entry) {
     String sqlRequest = "DELETE FROM " + entry.getTable() + "WHERE" + entry.getPrimaryKey() + "LIMIT 1";
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest)) {
@@ -261,13 +261,15 @@ public class Database {
           break;
       }
 
-      // přidej odpověď k dalším
-      synchronized(responcies) {
-        responcies.put(request.getToken(), responce);
-      }
-      // upozorni vlákno, které dotaz vzneslo, že má připravenou odpověď
-      synchronized(request.getToken()) {
-        request.getToken().notifyAll();
+      if (request.isResponceNeaded()) {
+        // přidej odpověď k dalším
+        synchronized(responcies) {
+          responcies.put(request.getToken(), responce);
+        }
+        // upozorni vlákno, které dotaz vzneslo, že má připravenou odpověď
+        synchronized(request.getToken()) {
+          request.getToken().notifyAll();
+        }        
       }
     }
 
@@ -286,11 +288,24 @@ public class Database {
     private String method;
     private ADatabaseEntry data;
     private List<WhereCondition> whereConditions;
+    private boolean responceNeaded = false;
+
+    public SQLRequest(String method, ADatabaseEntry data) {
+      this.data = data;
+      this.method = method;
+    }
 
     public SQLRequest(String method, ADatabaseEntry data, Object token) {
       this.data = data;
       this.method = method;
       this.token = token;
+      this.responceNeaded = true;
+    }
+
+    public SQLRequest(String method, ADatabaseEntry data, List<WhereCondition> whereConditions) {
+      this.data = data;
+      this.method = method;
+      this.whereConditions = whereConditions;
     }
 
     public SQLRequest(String method, ADatabaseEntry data, List<WhereCondition> whereConditions, Object token) {
@@ -298,6 +313,7 @@ public class Database {
       this.method = method;
       this.token = token;
       this.whereConditions = whereConditions;
+      this.responceNeaded = true;
     }
     
     public String getMethod() {
@@ -311,6 +327,9 @@ public class Database {
     }
     public List<WhereCondition> getConditions() {
       return whereConditions;
+    }
+    public boolean isResponceNeaded() {
+      return responceNeaded;
     }
   }
 

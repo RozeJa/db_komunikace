@@ -30,7 +30,7 @@ public class Category extends ADatabaseEntry {
 
    @Override
    public String getReadSQL() {
-       return name + ","  + available ;
+       return ids + "," + name + ","  + available ;
    }
 
    @Override
@@ -49,8 +49,9 @@ public class Category extends ADatabaseEntry {
    }
 
    private PreparedStatement fill(PreparedStatement ps) throws SQLException {
-      ps.setString(1, nameVal);
-      ps.setBoolean(2, availableVal);
+      ps.setInt(1, id);
+      ps.setString(2, nameVal);
+      ps.setBoolean(3, availableVal);
       return ps;
    }
 

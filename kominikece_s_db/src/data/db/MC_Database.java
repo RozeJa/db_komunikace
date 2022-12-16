@@ -5,33 +5,35 @@ import java.util.TreeMap;
 
 import data.Setting;
 import data.db.buildesr.ABuilder;
+import data.db.models.ADatabaseEntry;
 import data.db.models.Category;
 import data.db.models.Improvement;
 import data.db.models.Product;
 
 public class MC_Database extends Database {
 
-  //###################################################################//
-  // Část pro singleton
+    // ###################################################################//
+    // Část pro singleton
 
     private static MC_Database db;
 
     /**
      * Metoda slouží pro inicializaci databáze
+     * 
      * @param setting nastavení
-     * @throws NullPointerException pokud je {@param setting} {@value null} 
+     * @throws NullPointerException          pokud je {@param setting} {@value null}
      * @throws UnsupportedOperationException pokud již instance existuje
      */
     public static void init(Setting setting) throws NullPointerException {
-        if (setting == null) 
+        if (setting == null)
             throw new NullPointerException("Setting was not inicialiced.");
 
-        if (db != null) 
+        if (db != null)
             throw new UnsupportedOperationException();
 
         db = new MC_Database(setting);
     }
-    
+
     /**
      * @return instaci MC_Database
      * @throws NullPointerException pokud databáze nebyla inicializovaná
@@ -47,14 +49,13 @@ public class MC_Database extends Database {
         super(setting);
     }
 
-
-    //###################################################################//
+    // ###################################################################//
 
     private Map<Integer, Product> products = null;
     private Map<Integer, Category> categories = null;
     private Map<Integer, Improvement> improvements = null;
 
-    
+    // Akce s produkty
     public Map<Integer, Product> getProducts() {
         if (products == null) {
             loadProducts();
@@ -62,22 +63,27 @@ public class MC_Database extends Database {
 
         return products;
     }
+    /**
+     * Metada přidá do db objekt a z db ho načte
+     * @param product 
+     */
     public void addProduct(Product product) {
-        
+        // TODO: 
     }
-    public void updeteProduct(Product product) {
-
-    }
-    public void removeProduct(Product product) {
-        
+    public void removeProduct(Product product, Object token) {
+        product.setAvailable(false);
+        updeteData(product, token);
     }
     public Product getProduct(Integer id) {
-        return null;
+        synchronized (products) {
+            return products.get(id);
+        }
     }
-    private void loadProducts() {
+    public void loadProducts() {
+        // TODO: 
     }
 
-
+    // Akce s kategoriemi
     public Map<Integer, Category> getCategories() {
         if (categories == null) {
             loadCategories();
@@ -85,22 +91,23 @@ public class MC_Database extends Database {
 
         return categories;
     }
-    public void addCategory(Category product) {
-        
+    public void addCategory(Category category) {
+        // TODO: 
     }
-    public void updeteCategory(Category product) {
-
-    }
-    public void removeCategory(Category product) {
-        
+    public void removeCategory(Category category, Object token) {
+        category.setAvailable(false);
+        updeteData(category, token);
     }
     public Category getCategory(Integer id) {
-        return null;
-    }    
-    private void loadCategories() {
+        synchronized (categories) {
+            return categories.get(id);
+        }
+    }
+    public void loadCategories() {
+        // TODO: 
     }
 
-
+    // Akce s vylepšenímy
     public Map<Integer, Improvement> getImprovements() {
         if (improvements == null) {
             loadImprevements();
@@ -108,19 +115,36 @@ public class MC_Database extends Database {
 
         return improvements;
     }
-    public void addImprovement(Improvement product) {
-        
+    public void addImprovement(Improvement improvement) {
+        // TODO: 
     }
-    public void updeteImprovement(Improvement product) {
+    public void removeImprovement(Improvement improvement, Object token) {
+        improvement.setAvailable(false);
+        updeteData(improvement, token);
+    }
+    public Improvement getImprovement(Integer id) {
+        synchronized (improvements) {
+            return improvements.get(id);
+        }
+    }
+    public void loadImprevements() {
+        // TODO: 
+    }
 
+    /**
+     * Metoda update je obecná pro všechny. Metoda nevrací žádná data ani nijak neinteraguje s okolím
+     * @param aDatabaseEntry data, která mají být aktualizována
+     */
+    public void updeteData(ADatabaseEntry aDatabaseEntry, Object token) {
+        requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry, token));
     }
-    public void removeImprovement(Improvement product) {
-        
+    
+    /**
+     * 
+     * @param aDatabaseEntry
+     * @param token
+     */
+    public void removeData(ADatabaseEntry aDatabaseEntry, Object token) {
+        requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry, token));
     }
-    public Product getImprovement(Integer id) {
-        return null;
-    }
-    private void loadImprevements() {
-    }
-
 }
