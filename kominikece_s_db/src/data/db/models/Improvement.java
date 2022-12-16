@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 public class Improvement extends ADatabaseEntry implements Iterable<Category> {
 
-   private static final String name = "name", price = "price";
+   public static final String name = "name", price = "price";
 
    private Map<Integer, Category> availableCategories = new TreeMap<>();
 

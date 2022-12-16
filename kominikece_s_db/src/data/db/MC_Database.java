@@ -63,13 +63,6 @@ public class MC_Database extends Database {
 
         return products;
     }
-    /**
-     * Metada přidá do db objekt a z db ho načte
-     * @param product 
-     */
-    public void addProduct(Product product) {
-        // TODO: 
-    }
     public void removeProduct(Product product, Object token) {
         product.setAvailable(false);
         updeteData(product, token);
@@ -90,9 +83,6 @@ public class MC_Database extends Database {
         }
 
         return categories;
-    }
-    public void addCategory(Category category) {
-        // TODO: 
     }
     public void removeCategory(Category category, Object token) {
         category.setAvailable(false);
@@ -115,9 +105,6 @@ public class MC_Database extends Database {
 
         return improvements;
     }
-    public void addImprovement(Improvement improvement) {
-        // TODO: 
-    }
     public void removeImprovement(Improvement improvement, Object token) {
         improvement.setAvailable(false);
         updeteData(improvement, token);
@@ -132,19 +119,44 @@ public class MC_Database extends Database {
     }
 
     /**
-     * Metoda update je obecná pro všechny. Metoda nevrací žádná data ani nijak neinteraguje s okolím
+     * Metoda update je obecná pro všechny.
      * @param aDatabaseEntry data, která mají být aktualizována
+     * @param token pokud bude null, tak se metoda provede bez jaké koliv odpovědi.
+     * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
      */
     public void updeteData(ADatabaseEntry aDatabaseEntry, Object token) {
-        requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry, token));
+        if (token != null) {
+            requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry, token)); 
+        } else {
+            requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry)); 
+        }
     }
     
     /**
-     * 
-     * @param aDatabaseEntry
-     * @param token
+     * Metoda slouží pro odebrání dat z databáze.
+     * @param aDatabaseEntry data, která mají být odebrána
+     * @param token pokud bude null, tak se metoda provede bez jaké koliv odpovědi.
+     * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
      */
     public void removeData(ADatabaseEntry aDatabaseEntry, Object token) {
-        requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry, token));
+        if (token != null) {
+            requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry, token));
+        } else {
+            requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry));
+        }
+    }
+
+    /**
+     * Metoda slouží pro přidání dat do databáze.
+     * @param aDatabaseEntry data, která mají být přidána
+     * @param token pokud bude null, tak se metoda provede bez jaké koliv odpovědi.
+     * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
+     */
+    public void create(ADatabaseEntry aDatabaseEntry, Object token) {
+        if (token != null) {
+            requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, token));
+        } else {
+            requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry));
+        }
     }
 }

@@ -1,14 +1,17 @@
 package data.db.models;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 // Třída je předken všech modelů, které reprezentují data v databázi
 public abstract class ADatabaseEntry {
    // definuje vlastnosti používané u velkého množství modelů
    protected int id = 0;
    protected boolean availableVal;
-   protected static final String ids = "id", available = "available";
+   public static final String ids = "id", available = "available";
 
    public int getId() {
       return id;
@@ -63,4 +66,19 @@ public abstract class ADatabaseEntry {
     * @throws SQLException pokud nastane chyba při doplňování
     */
    public abstract PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException;
+   /**
+    * Metoda extrahuje z {@param rs} hodnoty klíčů
+    * @param rs ResultSet obsahující primární klíč
+    * @return vrací mapu<název vlastnosti, hodnota> 
+    * @throws SQLException pokud nastane chyba při čtení
+    */
+   public Map<String, ?> getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException {
+        Map<String, Integer> primaryKey = new HashMap<>();
+ 
+        if (rs.next()) {
+           primaryKey.put(ids, rs.getInt(ids));
+        }
+ 
+        return primaryKey;
+   }
 }

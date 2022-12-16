@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class Category extends ADatabaseEntry {
 
-   private static final String name = "name";
+   public static final String name = "name";
    private String nameVal;
 
    public Category(int id, String name, boolean availableVal) {

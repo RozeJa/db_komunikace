@@ -113,15 +113,17 @@ public class Database {
    * @param entry instance, musí rozšiřovat ADatabaseEntry
    * @return vrací booleanovou hodnotu, zda se zapsání podařilo
    */
-  protected boolean create(ADatabaseEntry entry) {
+  protected Map<String, ?> create(ADatabaseEntry entry) {
     String sqlRequest = "INSERT INTO " + entry.getTable() + entry.getCreateSQL();
 
-    try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString())) {
-      
-      return entry.fillCreateSQL(ps).executeUpdate() == 1;
+    try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString(), PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+      entry.fillCreateSQL(ps).executeUpdate();
+
+      return entry.getPrimaryKeyFromResultSet(ps.getGeneratedKeys());
     } catch (Exception e) {
       e.printStackTrace();
-      return false;
+      return null;
     }
   }
 
@@ -244,7 +246,7 @@ public class Database {
       // vyber metodu a vytvoř odpověď
       switch (request.getMethod()) {
         case SQLRequest.create:
-          responce = new SQLResponce(null, create(request.getData()));
+          responce = new SQLResponce(create(request.getData()));
           break;
         case SQLRequest.read:
           try {
@@ -337,10 +339,16 @@ public class Database {
   protected class SQLResponce {
     private ABuilder builder;
     private boolean succes;
+    private Map<String, ?> primaryKey;
 
     public SQLResponce(ABuilder builder, boolean succes) {
       this.builder = builder;
       this.succes = succes;
+    }
+
+    public SQLResponce(Map<String, ?> primaryKey) {
+      this.primaryKey = primaryKey;
+      this.succes = primaryKey == null;
     }
 
     public ABuilder getBuilder() {
@@ -349,6 +357,10 @@ public class Database {
     
     public boolean isSucces() {
         return succes;
+    }
+
+    public Map<String, ?> getPrimaryKey() {
+      return primaryKey;
     }
   }
 }
