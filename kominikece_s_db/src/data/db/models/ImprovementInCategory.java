@@ -17,6 +17,20 @@ public class ImprovementInCategory extends ADatabaseEntry {
 
         availableVal = true;
     }
+    public ImprovementInCategory() {}
+
+    public int getImprovementId() {
+        return improvementId;
+    }
+    public void setImprovementId(int improvementId) {
+        this.improvementId = improvementId;
+    }
+    public int getCategoryId() {
+        return categoryId;
+    }
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
 
     @Override
     public String getCreateSQL() {

@@ -92,6 +92,16 @@ public class Database {
 
     return getBuilder(ps.executeQuery(), type);
   }
+
+    /**
+   * Metoda umožňuje načtení dat z db
+   * @param type instance modelu, může být úplně prázdná, musí rozšiřovat ADatabaseEntry
+   * @return vrací instanci Buildru pro konkrétní model. Jen nutné dodržet jmenou konvenci: model = Model, builder = ModelBuilder
+   * @throws Exception pokud se nepodaří vytvořit Builder
+   */
+  protected ABuilder read(ADatabaseEntry type) throws Exception {
+    return read(type, new LinkedList<>());
+  }
  
   /**
    * Metoda vytvoří instanci Buildru a nastavý mu vlastnost typu ResultSet

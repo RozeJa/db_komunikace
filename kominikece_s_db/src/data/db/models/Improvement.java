@@ -15,7 +15,6 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
    private String nameVal;
    private double priceVal;
 
-
    public Improvement(int id, String name, double price, boolean availableVal) {
       nameVal = name;
       priceVal = price;
@@ -23,6 +22,7 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
       this.availableVal = availableVal;
       this.id = id;
    }
+   public Improvement() {}
 
    public void setPrice(double price) {
       priceVal = price;

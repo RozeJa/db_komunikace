@@ -8,7 +8,9 @@ import data.db.buildesr.ABuilder;
 import data.db.models.ADatabaseEntry;
 import data.db.models.Category;
 import data.db.models.Improvement;
+import data.db.models.ImprovementInCategory;
 import data.db.models.Product;
+import data.db.models.ProductsImprovement;
 
 public class MC_Database extends Database {
 
@@ -55,6 +57,88 @@ public class MC_Database extends Database {
     private Map<Integer, Category> categories = null;
     private Map<Integer, Improvement> improvements = null;
 
+    private Runnable loadCategory = () -> {
+        categories = new TreeMap<>();
+
+        try {
+            for (ADatabaseEntry c : read(new Category())) {
+                synchronized(categories) {
+                    categories.put(c.getId(), ((Category) c));
+                }
+            }                
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    };
+    private Runnable loadImprovement = () -> {
+        improvements = new TreeMap<>();
+
+        try {
+            for (ADatabaseEntry i : read(new Improvement())) {
+                synchronized(improvements) {
+                    improvements.put(i.getId(), ((Improvement) i));
+                }
+            }       
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (categories == null) {
+            Thread tr = new Thread(loadCategory);
+
+            tr.start();
+            try {
+                tr.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            for (ADatabaseEntry iic : read(new ImprovementInCategory())) {
+                synchronized(improvements) {
+                    improvements.get(((ImprovementInCategory) iic).getImprovementId()).addCategories(categories.get(((ImprovementInCategory) iic).getCategoryId()));
+                }
+            }                
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    };
+    private Runnable loadProduct = () -> {
+        products = new TreeMap<>();
+
+        try {
+            for (ADatabaseEntry i : read(new Product())) {
+                synchronized(products) {
+                    products.put(i.getId(), ((Product) i));
+                }
+            }       
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (improvements == null) {
+            Thread tr = new Thread(loadImprovement);
+
+            tr.start();
+            try {
+                tr.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            for (ADatabaseEntry pi : read(new ProductsImprovement())) {
+                synchronized(products) {
+                    products.get(((ProductsImprovement) pi).getProductId()).addImprovement(improvements.get(((ProductsImprovement) pi).getImprovementId()));
+                }
+            }                
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    };
+
     // Akce s produkty
     public Map<Integer, Product> getProducts() {
         if (products == null) {
@@ -73,7 +157,9 @@ public class MC_Database extends Database {
         }
     }
     public void loadProducts() {
-        // TODO: 
+        Thread t = new Thread(loadProduct);
+        
+        t.start();
     }
 
     // Akce s kategoriemi
@@ -94,7 +180,9 @@ public class MC_Database extends Database {
         }
     }
     public void loadCategories() {
-        // TODO: 
+        Thread t = new Thread(loadCategory);
+
+        t.start();
     }
 
     // Akce s vylepšenímy
@@ -115,7 +203,9 @@ public class MC_Database extends Database {
         }
     }
     public void loadImprevements() {
-        // TODO: 
+        Thread t = new Thread(loadImprovement);
+
+        t.start();
     }
 
     /**

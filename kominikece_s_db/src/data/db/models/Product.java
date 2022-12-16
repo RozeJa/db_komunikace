@@ -8,22 +8,23 @@ import java.util.TreeMap;
 
 public class Product extends ADatabaseEntry implements Iterable<Improvement> {
 
-     public static final String name = "name", price = "price";
+     public static final String name = "name", price = "price", category = "category";
    
     private Map<Integer, Improvement> improvements = new TreeMap<>();
-    private Category categories;
+    private int categoryId;
 
     private String nameVal;
     private double priceVal;
  
 
-     public Product(int id, String name, double price, boolean availableVal) {
+     public Product(int id, String name, double price, int categoryId, boolean availableVal) {
           nameVal = name;
           priceVal = price;
 
           this.availableVal = availableVal;
           this.id = id;
      }
+     public Product() {}
    
 
      public void setPrice(double price) {
@@ -42,12 +43,12 @@ public class Product extends ADatabaseEntry implements Iterable<Improvement> {
           return nameVal;
      }
  
-     public void setCategories(Category categories) {
-          this.categories = categories;
+     public void setCategories(int categoryId) {
+          this.categoryId = categoryId;
      }
  
-     public Category getCategories() {
-          return categories;
+     public int getCategories() {
+          return categoryId;
      }
 
      public void addImprovement(int key, Improvement improvement) {
@@ -68,17 +69,17 @@ public class Product extends ADatabaseEntry implements Iterable<Improvement> {
 
    @Override
    public String getCreateSQL() {
-       return "(" + name + ", " + price + ", " + available + ") VALUES (?, ?, ?)";
+       return "(" + name + ", " + price + ", " + category + ", " + available + ") VALUES (?, ?, ?, ?)";
    }
 
    @Override
    public String getReadSQL() {
-       return ids + "," + name + "," + price  + "," + available;
+       return ids + "," + name + "," + price + "," + category + "," + available;
    }
 
    @Override
    public String getUpdateSQL() {
-       return name + " = ?, " + price  + " = ?," + available + " = ?";
+       return name + " = ?, " + price + " = ?," + category + " = ?," + available + " = ?";
    }
 
    @Override
@@ -100,7 +101,8 @@ public class Product extends ADatabaseEntry implements Iterable<Improvement> {
       ps.setInt(1, id);
       ps.setString(2, nameVal);
       ps.setDouble(3, priceVal);
-      ps.setBoolean(4, availableVal);
+      ps.setInt(4, categoryId);
+      ps.setBoolean(5, availableVal);
       return ps;
    }
 

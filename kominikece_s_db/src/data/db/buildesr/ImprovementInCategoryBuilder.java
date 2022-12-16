@@ -1,6 +1,5 @@
 package data.db.buildesr;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import data.db.models.ImprovementInCategory;

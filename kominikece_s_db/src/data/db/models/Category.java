@@ -14,6 +14,7 @@ public class Category extends ADatabaseEntry {
       this.availableVal = availableVal;
       this.id = id;
    }
+   public Category() {}
 
    public void setName(String name) {
       nameVal = name;

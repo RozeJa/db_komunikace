@@ -17,6 +17,20 @@ public class ProductsImprovement extends ADatabaseEntry {
         
         availableVal = true;
     }
+    public ProductsImprovement() {}
+
+    public int getProductId() {
+        return productId;
+    }
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+    public int getImprovementId() {
+        return improvementId;
+    }
+    public void setImprovementId(int improvementId) {
+        this.improvementId = improvementId;
+    }
 
     @Override
     public String getCreateSQL() {

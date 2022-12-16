@@ -7,6 +7,6 @@ import data.db.models.Product;
 public class ProductBuilder extends ABuilder {
     @Override
     public Product build() throws SQLException {
-        return new Product(rs.getInt(Product.ids), rs.getString(Product.name), rs.getDouble(Product.price), rs.getBoolean(Product.available));
+        return new Product(rs.getInt(Product.ids), rs.getString(Product.name), rs.getDouble(Product.price), rs.getInt(Product.category), rs.getBoolean(Product.available));
     }
 }
