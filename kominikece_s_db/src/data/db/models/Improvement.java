@@ -3,9 +3,7 @@ package data.db.models;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
