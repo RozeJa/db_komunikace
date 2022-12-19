@@ -8,6 +8,7 @@ public class Setting implements Iterable<String> {
     private static Setting instance;
 
     public static final String db_url = "db_url", usr = "usr", pw = "pw", enable_asyn_db_thread = "enable_asyn_db_thread"; 
+    public static final String width = "width", height = "height", fullscrean = "fullscrean"; 
 
     private Setting() {}
 

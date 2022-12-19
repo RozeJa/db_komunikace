@@ -9,9 +9,17 @@ gui:
 	-- vybrání zobrazení --> vybrat tabulku 
 	- zobrazování 	- tabulka
 			- problém při více vylepšeních nebo kategoriích
+	id 	nazev	cena	vylepseni
+	1	asd	54	sadadasd
+				dsasaaddas
+				sadsadad	
+	2	asdasd	788	
+	3	asdasda	8787	asasasdada
+
 	- editování|přidávání	- formulář jako dialog
-	- odebrání	- odebrat z tabulky vybrané pomocí buttnu
+	- odebrání	- odebrat z tabulky vybra	né pomocí buttnu
 	- filtování 	- full stack v tabulce 
 
 	- přidání blbůstek 
 		- editace nastavení 
+
