@@ -3,8 +3,8 @@ package gui;
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
-import data.db.Database;
 import data.db.MC_Database;
 import data.db.models.Category;
 import data.db.models.Improvement;
@@ -12,10 +12,8 @@ import data.db.models.Product;
 
 import java.awt.event.*;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 public class MainFrame extends JFrame {
 
@@ -28,6 +26,8 @@ public class MainFrame extends JFrame {
 
     private boolean isClosed = false;
 
+    private int actualDataModel = 0;
+
     public MainFrame(String title) {
         setTitle(title);
 
@@ -35,6 +35,7 @@ public class MainFrame extends JFrame {
 
         initFunctions();
 
+        fillProducts();
     }
 
     public boolean isClosed() {
@@ -49,6 +50,24 @@ public class MainFrame extends JFrame {
             }
         };
         datatypes.addMouseListener(selectDataTyps);
+        
+        add.addActionListener(l -> {
+            // TODO:
+
+            // Podle zvolené 
+        });
+
+        update.addActionListener(l -> {
+            // TODO: 
+        });
+    
+        delete.addActionListener(l -> {
+            // TODO: 
+        });
+
+        dataTable.getModel().addTableModelListener(l -> {
+            // TODO: full stack vyhledávání
+        });
     }
 
     private void reprintTable(int index) {
@@ -63,6 +82,8 @@ public class MainFrame extends JFrame {
                 fillCategories();
                 break;
         }
+
+        actualDataModel = index;
     }
 
     private void fillProducts() {
@@ -70,9 +91,7 @@ public class MainFrame extends JFrame {
         if (data == null) 
             data = new TreeMap<>();
 
-        dataTable = new JTable(formatProductData(data), Product.getPropertyes());
-
-        dataTableSP.setViewportView(dataTable);
+        dataTable.setModel(new DefaultTableModel(formatProductData(data), Product.getPropertyes()));
     }
 
     private String[][] formatProductData(Map<Integer, Product> products) {
