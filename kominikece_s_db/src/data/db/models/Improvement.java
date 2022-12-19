@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
 
-   public static final String name = "name", price = "price";
+   public static final String name = "nazev", price = "cena";
 
    private Set<Integer> availableCategories = new TreeSet<>();
 
@@ -105,5 +105,10 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
              return keyIterator.next();
          }
       };
+   }
+
+
+   public static String[] getPropertyes() {
+      return new String[] {"id", "název vylepšení", "cena", "dostupná", "kategorie"};
    }
 }

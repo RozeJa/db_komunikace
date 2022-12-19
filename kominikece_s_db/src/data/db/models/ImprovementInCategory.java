@@ -79,6 +79,6 @@ public class ImprovementInCategory extends ADatabaseEntry {
 
     @Override
     public String getTable() {
-        return "VylepseniProKategorie";
+        return "VylepseniProKetegorie";
     }
 }

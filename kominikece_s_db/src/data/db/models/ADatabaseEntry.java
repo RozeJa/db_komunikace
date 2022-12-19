@@ -11,7 +11,7 @@ public abstract class ADatabaseEntry {
    // definuje vlastnosti používané u velkého množství modelů
    protected int id = 0;
    protected boolean availableVal;
-   public static final String ids = "id", available = "available";
+   public static final String ids = "id", available = "dostupne";
 
    public int getId() {
       return id;

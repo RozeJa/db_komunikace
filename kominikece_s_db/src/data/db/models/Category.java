@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class Category extends ADatabaseEntry {
 
-   public static final String name = "name";
+   public static final String name = "nazev";
    private String nameVal;
 
    public Category(int id, String name, boolean availableVal) {
@@ -64,5 +64,10 @@ public class Category extends ADatabaseEntry {
    @Override
    public String getTable() {
        return "Kategorie";
+   }
+
+
+   public static String[] getPropertyes() {
+      return new String[] {"id", "název kategorie", "dostupná"};
    }
 }

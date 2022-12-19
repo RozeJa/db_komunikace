@@ -18,10 +18,10 @@ USE `MC_products` ;
 -- Table `MC_products`.`Vylepseni`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `MC_products`.`Vylepseni` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nazev` VARCHAR(45) NOT NULL,
   `cena` DOUBLE NOT NULL,
-  `dostupne` INT NOT NULL,
+  `dostupne` TINYINT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -30,9 +30,9 @@ ENGINE = InnoDB;
 -- Table `MC_products`.`Kategorie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `MC_products`.`Kategorie` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nazev` VARCHAR(45) NOT NULL,
-  `dostupne` INT NOT NULL,
+  `dostupne` TINYINT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -41,10 +41,10 @@ ENGINE = InnoDB;
 -- Table `MC_products`.`Produkty`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `MC_products`.`Produkty` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nazev` VARCHAR(45) NOT NULL,
   `cena` DOUBLE NOT NULL,
-  `dostupne` INT NOT NULL,
+  `dostupne` TINYINT NOT NULL,
   `kategorie` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Produkty_Ketegorie_idx` (`kategorie` ASC),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `MC_products`.`VylepseniProduktu` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Vylepseni_has_Produkty_Produkty1`
     FOREIGN KEY (`produkt`)
-    REFERENCES `MC_products`.`Produkty` (`íd`)
+    REFERENCES `MC_products`.`Produkty` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

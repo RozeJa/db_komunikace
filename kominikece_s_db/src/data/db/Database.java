@@ -66,6 +66,7 @@ public class Database {
           //"jdbc:mysql://localhost:3306/mydb"
           conection = DriverManager.getConnection(setting.getAttribute(Setting.db_url), setting.getAttribute(Setting.usr), setting.getAttribute(Setting.pw));
       } catch (Exception e) {
+        e.printStackTrace();
       }
 
       requester = new DatabaseRequester(Boolean.parseBoolean(setting.getAttribute(Setting.enable_asyn_db_thread)));
@@ -113,7 +114,7 @@ public class Database {
    * @throws Exception pokud se nepodaří vytvořit Builder
    */
   private ABuilder getBuilder(ResultSet rs, ADatabaseEntry type) throws Exception {
-    ABuilder builder = (ABuilder) Class.forName(type.getClass().getName() + "Builder").getConstructor().newInstance();
+    ABuilder builder = (ABuilder) Class.forName(type.getClass().getName().replace("models", "buildesr") + "Builder").getConstructor().newInstance();
 
     builder.setResultSet(rs);
 

@@ -6,9 +6,10 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+
 public class Product extends ADatabaseEntry implements Iterable<Integer> {
 
-     public static final String name = "name", price = "price", category = "category";
+     public static final String name = "nazev", price = "cena", category = "kategorie";
    
     private Set<Integer> improvements = new TreeSet<>();
     private int categoryId;
@@ -48,7 +49,7 @@ public class Product extends ADatabaseEntry implements Iterable<Integer> {
           this.categoryId = categoryId;
      }
  
-     public int getCategories() {
+     public int getCategory() {
           return categoryId;
      }
 
@@ -118,5 +119,11 @@ public class Product extends ADatabaseEntry implements Iterable<Integer> {
              return keyIterator.next();
          }
        };
+   }
+
+
+
+   public static String[] getPropertyes() {
+     return new String[] {"id", "název produktu", "cena", "dostupná", "vypelšení"};
    }
 }
