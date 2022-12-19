@@ -17,9 +17,6 @@ gui:
 	3	asdasda	8787	asasasdada
 
 	- editování|přidávání	- formulář jako dialog
-	- odebrání	- odebrat z tabulky vybra	né pomocí buttnu
+	- odebrání	- odebrat z tabulky vybra	 pomocí buttnu
 	- filtování 	- full stack v tabulce 
-
-	- přidání blbůstek 
-		- editace nastavení 
 
