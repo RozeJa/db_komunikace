@@ -4,13 +4,15 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
-public class Improvement extends ADatabaseEntry implements Iterable<Category> {
+public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
 
    public static final String name = "name", price = "price";
 
-   private Map<Integer, Category> availableCategories = new TreeMap<>();
+   private Set<Integer> availableCategories = new TreeSet<>();
 
    private String nameVal;
    private double priceVal;
@@ -40,20 +42,12 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
       return nameVal;
    }
 
-   public void addCategories(int key, Category categories) {
-      availableCategories.put(key, categories);
-   }
-
-   public void addCategories(Category categories) {
-      addCategories(categories.getId(), categories);
+   public void addCategories(int categories) {
+      availableCategories.add(categories);
    }
  
-   public Category removeCategories(int id) {
+   public boolean removeCategories(int id) {
       return availableCategories.remove(id);
-   }
- 
-   public Category getCategories(int id) {
-      return availableCategories.get(id);
    }
    
    @Override
@@ -100,17 +94,17 @@ public class Improvement extends ADatabaseEntry implements Iterable<Category> {
    }
 
    @Override
-   public Iterator<Category> iterator() {
-      return new Iterator<Category>() {
-         private Iterator<Integer> keyIterator = availableCategories.keySet().iterator();
+   public Iterator<Integer> iterator() {
+      return new Iterator<Integer>() {
+         private Iterator<Integer> keyIterator = availableCategories.iterator();
          @Override
          public boolean hasNext() {
              return keyIterator.hasNext();
          }
 
          @Override
-         public Category next() {
-             return availableCategories.get(keyIterator.next());
+         public Integer next() {
+             return keyIterator.next();
          }
       };
    }

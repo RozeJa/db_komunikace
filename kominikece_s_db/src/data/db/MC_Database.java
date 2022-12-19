@@ -82,21 +82,10 @@ public class MC_Database extends Database {
             e.printStackTrace();
         }
 
-        if (categories == null) {
-            Thread tr = new Thread(loadCategory);
-
-            tr.start();
-            try {
-                tr.join();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         try {
             for (ADatabaseEntry iic : read(new ImprovementInCategory())) {
                 synchronized(improvements) {
-                    improvements.get(((ImprovementInCategory) iic).getImprovementId()).addCategories(categories.get(((ImprovementInCategory) iic).getCategoryId()));
+                    improvements.get(((ImprovementInCategory) iic).getImprovementId()).addCategories(((ImprovementInCategory) iic).getCategoryId());
                 }
             }                
         } catch (Exception e) {
@@ -116,21 +105,10 @@ public class MC_Database extends Database {
             e.printStackTrace();
         }
 
-        if (improvements == null) {
-            Thread tr = new Thread(loadImprovement);
-
-            tr.start();
-            try {
-                tr.join();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         try {
             for (ADatabaseEntry pi : read(new ProductsImprovement())) {
                 synchronized(products) {
-                    products.get(((ProductsImprovement) pi).getProductId()).addImprovement(improvements.get(((ProductsImprovement) pi).getImprovementId()));
+                    products.get(((ProductsImprovement) pi).getProductId()).addImprovement(((ProductsImprovement) pi).getImprovementId());
                 }
             }                
         } catch (Exception e) {

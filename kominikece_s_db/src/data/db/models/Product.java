@@ -3,14 +3,14 @@ package data.db.models;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class Product extends ADatabaseEntry implements Iterable<Improvement> {
+public class Product extends ADatabaseEntry implements Iterable<Integer> {
 
      public static final String name = "name", price = "price", category = "category";
    
-    private Map<Integer, Improvement> improvements = new TreeMap<>();
+    private Set<Integer> improvements = new TreeSet<>();
     private int categoryId;
 
     private String nameVal;
@@ -52,20 +52,12 @@ public class Product extends ADatabaseEntry implements Iterable<Improvement> {
           return categoryId;
      }
 
-     public void addImprovement(int key, Improvement improvement) {
-          improvements.put(key, improvement); 
+     public void addImprovement(int improvementId) {
+          improvements.add(improvementId); 
      }
-
-   public void addImprovement(Improvement improvement) {
-        addImprovement(improvement.getId() ,improvement);
-   }
  
-   public Improvement removeImprovement(int id) {
+   public boolean removeImprovement(int id) {
         return improvements.remove(id);
-   }
- 
-   public Improvement getImprovement(int id) {
-        return improvements.get(id);
    }
 
    @Override
@@ -113,17 +105,17 @@ public class Product extends ADatabaseEntry implements Iterable<Improvement> {
    }
    
    @Override
-   public Iterator<Improvement> iterator() {
-       return new Iterator<Improvement>() {
-        private Iterator<Integer> keyIterator = improvements.keySet().iterator();
+   public Iterator<Integer> iterator() {
+       return new Iterator<Integer>() {
+        private Iterator<Integer> keyIterator = improvements.iterator();
          @Override
          public boolean hasNext() {
              return keyIterator.hasNext();
          }
 
          @Override
-         public Improvement next() {
-             return improvements.get(keyIterator.next());
+         public Integer next() {
+             return keyIterator.next();
          }
        };
    }
