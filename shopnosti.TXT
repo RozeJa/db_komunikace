@@ -12,3 +12,6 @@ gui:
 	- editování|přidávání	- formulář jako dialog
 	- odebrání	- odebrat z tabulky vybrané pomocí buttnu
 	- filtování 	- full stack v tabulce 
+
+	- přidání blbůstek 
+		- editace nastavení 
