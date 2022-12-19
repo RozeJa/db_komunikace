@@ -214,11 +214,7 @@ public class MC_Database extends Database {
      * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
      */
     public void updeteData(ADatabaseEntry aDatabaseEntry, Object token) {
-        if (token != null) {
-            requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry, token)); 
-        } else {
-            requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry)); 
-        }
+        requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry, token));
     }
     
     /**
@@ -228,11 +224,7 @@ public class MC_Database extends Database {
      * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
      */
     public void removeData(ADatabaseEntry aDatabaseEntry, Object token) {
-        if (token != null) {
-            requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry, token));
-        } else {
-            requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry));
-        }
+        requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry, token));
     }
 
     /**
@@ -242,10 +234,6 @@ public class MC_Database extends Database {
      * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
      */
     public void create(ADatabaseEntry aDatabaseEntry, Object token) {
-        if (token != null) {
-            requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, token));
-        } else {
-            requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry));
-        }
+        requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, token));
     }
 }

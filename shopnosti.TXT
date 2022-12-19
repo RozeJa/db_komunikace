@@ -1,6 +1,14 @@
 aplikace by měla:
-	- umožnit zobrazení
+	- zobrazení
 	- přidání
 	- odebrání
 	- editaci
 	- filtrování 
+
+gui:
+	-- vybrání zobrazení --> vybrat tabulku 
+	- zobrazování 	- tabulka
+			- problém při více vylepšeních nebo kategoriích
+	- editování|přidávání	- formulář jako dialog
+	- odebrání	- odebrat z tabulky vybrané pomocí buttnu
+	- filtování 	- full stack v tabulce 

@@ -304,30 +304,23 @@ public class Database {
     private List<WhereCondition> whereConditions;
     private boolean responceNeaded = false;
 
-    public SQLRequest(String method, ADatabaseEntry data) {
-      this.data = data;
-      this.method = method;
-    }
-
     public SQLRequest(String method, ADatabaseEntry data, Object token) {
       this.data = data;
       this.method = method;
-      this.token = token;
-      this.responceNeaded = true;
-    }
-
-    public SQLRequest(String method, ADatabaseEntry data, List<WhereCondition> whereConditions) {
-      this.data = data;
-      this.method = method;
-      this.whereConditions = whereConditions;
+      if (token != null) {
+        this.token = token;
+        this.responceNeaded = true;
+      } 
     }
 
     public SQLRequest(String method, ADatabaseEntry data, List<WhereCondition> whereConditions, Object token) {
       this.data = data;
       this.method = method;
-      this.token = token;
-      this.whereConditions = whereConditions;
-      this.responceNeaded = true;
+      if (token != null) {
+        this.token = token;
+        this.whereConditions = whereConditions;
+        this.responceNeaded = true;
+      } 
     }
     
     public String getMethod() {
