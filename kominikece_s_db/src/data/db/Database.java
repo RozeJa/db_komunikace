@@ -216,6 +216,7 @@ public class Database {
     public void addRequest(SQLRequest request) {
       synchronized(requests) {
         requests.add(request);
+        requests.notifyAll();
       }
     }
 

@@ -6,15 +6,21 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import data.db.MC_Database;
+import data.db.models.ADatabaseEntry;
 import data.db.models.Category;
 import data.db.models.Improvement;
 import data.db.models.Product;
+import gui.forms.CategoryForm;
+import gui.forms.EditForm;
+import gui.forms.ImprovementForm;
+import gui.forms.ProductForm;
 
 import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+// TODO: mapuj jména k objektům, abys mohl hlídat zda uživatel nezadal, takoví produkt, který existuje
 public class MainFrame extends JFrame {
 
     private Container container;
@@ -24,9 +30,9 @@ public class MainFrame extends JFrame {
 
     private JButton add, update, delete;
 
-    private boolean isClosed = false;
-
     private int actualDataModel = 0;
+
+    private MC_Database mc_db = MC_Database.getDB();
 
     public MainFrame(String title) {
         setTitle(title);
@@ -38,11 +44,6 @@ public class MainFrame extends JFrame {
         fillProducts();
     }
 
-    public boolean isClosed() {
-        return isClosed;
-    }
-
-
     private void initFunctions() {
         MouseListener selectDataTyps = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -52,17 +53,79 @@ public class MainFrame extends JFrame {
         datatypes.addMouseListener(selectDataTyps);
         
         add.addActionListener(l -> {
-            // TODO:
+            // TODO: provést synchronizaci a změnit value v tabulce
+            EditForm ef = null;
+            ADatabaseEntry ade = null;
 
-            // Podle zvolené 
+            switch (actualDataModel) {
+                case 0:                    
+                    ef = new ProductForm(null, mc_db.getImprovements(), mc_db.getCategories());
+                    break;
+                case 1:
+                    ef = new ImprovementForm(null, mc_db.getCategories());
+                    break;
+                case 2:
+                    ef = new CategoryForm(null);
+                    break;
+            }
+
+            if (ef != null) {
+                setJDialog(ef);
+                if (ef.isConfirmed())
+                    mc_db.create(ade, null);   
+            }
         });
 
         update.addActionListener(l -> {
-            // TODO: 
+            int selectedIndex = dataTable.getSelectedRow();
+            
+            if (selectedIndex >= 0) {
+                // TODO: provést synchronizaci a změnit value v tabulce
+                EditForm ef = null;
+                ADatabaseEntry ade = null;
+
+                switch (actualDataModel) {
+                    case 0:
+                        ade =  mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
+                        
+                        ef = new ProductForm((Product) ade, mc_db.getImprovements(), mc_db.getCategories());
+                        break;
+                    case 1:
+                        ade = mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
+
+                        ef = new ImprovementForm((Improvement) ade, mc_db.getCategories());
+                        break;
+                    case 2:
+                        ade = mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
+
+                        ef = new CategoryForm((Category) ade);
+                        break;
+                }
+                if (ef != null) {
+                    setJDialog(ef);
+                    if (ef.isConfirmed())
+                        mc_db.updeteData(ade, null);   
+                }
+            } 
         });
     
         delete.addActionListener(l -> {
-            // TODO: 
+            int selectedIndex = dataTable.getSelectedRow();
+            
+            if (selectedIndex >= 0) {
+                // TODO: provést synchronizaci a změnit value v tabulce
+                switch (actualDataModel) {
+                    case 0:
+                        mc_db.removeProduct(mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        break;
+                    case 1:
+                        mc_db.removeImprovement(mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        break;
+                    case 2:
+                        mc_db.removeCategory(mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        break;
+                }
+            }
         });
 
         dataTable.getModel().addTableModelListener(l -> {
@@ -208,7 +271,6 @@ public class MainFrame extends JFrame {
         dataTableSP = new JScrollPane(dataTable);
         midPan.add(dataTableSP);
 
-
         JPanel right = new JPanel(new GridLayout(4,1));
 
         add = new JButton("Přidat");
@@ -227,17 +289,8 @@ public class MainFrame extends JFrame {
         container.add(dataTableSP);
     }
 
-
     private void setJDialog(JDialog frame) {
         frame.setModal(true);
-        frame.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        frame.setSize(800, 500);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(true);
-        frame.setVisible(true);
-    }
-    
-    private void setJFrame(JFrame frame) {
         frame.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         frame.setSize(800, 500);
         frame.setLocationRelativeTo(null);

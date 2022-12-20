@@ -56,15 +56,16 @@ public class MC_Database extends Database {
     private Map<Integer, Category> categories = null;
     private Map<Integer, Improvement> improvements = null;
 
+    // TODO: pokud je property available na false tak ji ani neukládej
     private Runnable loadCategory = () -> {
         categories = new TreeMap<>();
 
         try {
             for (ADatabaseEntry c : read(new Category())) {
-                synchronized(categories) {
+                synchronized (categories) {
                     categories.put(c.getId(), ((Category) c));
                 }
-            }                
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,20 +75,21 @@ public class MC_Database extends Database {
 
         try {
             for (ADatabaseEntry i : read(new Improvement())) {
-                synchronized(improvements) {
+                synchronized (improvements) {
                     improvements.put(i.getId(), ((Improvement) i));
                 }
-            }       
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
             for (ADatabaseEntry iic : read(new ImprovementInCategory())) {
-                synchronized(improvements) {
-                    improvements.get(((ImprovementInCategory) iic).getImprovementId()).addCategories(((ImprovementInCategory) iic).getCategoryId());
+                synchronized (improvements) {
+                    improvements.get(((ImprovementInCategory) iic).getImprovementId())
+                            .addCategories(((ImprovementInCategory) iic).getCategoryId());
                 }
-            }                
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,20 +99,21 @@ public class MC_Database extends Database {
 
         try {
             for (ADatabaseEntry i : read(new Product())) {
-                synchronized(products) {
+                synchronized (products) {
                     products.put(i.getId(), ((Product) i));
                 }
-            }       
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
             for (ADatabaseEntry pi : read(new ProductsImprovement())) {
-                synchronized(products) {
-                    products.get(((ProductsImprovement) pi).getProductId()).addImprovement(((ProductsImprovement) pi).getImprovementId());
+                synchronized (products) {
+                    products.get(((ProductsImprovement) pi).getProductId())
+                            .addImprovement(((ProductsImprovement) pi).getImprovementId());
                 }
-            }                
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,18 +127,21 @@ public class MC_Database extends Database {
 
         return products;
     }
+
     public void removeProduct(Product product, Object token) {
         product.setAvailable(false);
         updeteData(product, token);
     }
+
     public Product getProduct(Integer id) {
         synchronized (products) {
             return products.get(id);
         }
     }
+
     public void loadProducts() {
         Thread t = new Thread(loadProduct);
-        
+
         t.start();
     }
 
@@ -147,15 +153,18 @@ public class MC_Database extends Database {
 
         return categories;
     }
+
     public void removeCategory(Category category, Object token) {
         category.setAvailable(false);
         updeteData(category, token);
     }
+
     public Category getCategory(Integer id) {
         synchronized (categories) {
             return categories.get(id);
         }
     }
+
     public void loadCategories() {
         Thread t = new Thread(loadCategory);
 
@@ -170,15 +179,18 @@ public class MC_Database extends Database {
 
         return improvements;
     }
+
     public void removeImprovement(Improvement improvement, Object token) {
         improvement.setAvailable(false);
         updeteData(improvement, token);
     }
+
     public Improvement getImprovement(Integer id) {
         synchronized (improvements) {
             return improvements.get(id);
         }
     }
+
     public void loadImprevements() {
         Thread t = new Thread(loadImprovement);
 
@@ -187,19 +199,31 @@ public class MC_Database extends Database {
 
     /**
      * Metoda update je obecná pro všechny.
+     * 
      * @param aDatabaseEntry data, která mají být aktualizována
-     * @param token pokud bude null, tak se metoda provede bez jaké koliv odpovědi.
-     * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
+     * @param token          pokud bude null, tak se metoda provede bez jaké koliv
+     *                       odpovědi.
+     *                       pokud bude {@param token} nějaké hodnoty, vlákno
+     *                       DatabaseRequester probudí všechna vlákna, která čekají
+     *                       na tomto monitoru a pod tímto objektem ho přidá do mapy
+     *                       odpovědí. Obpověď jde získat zavoláním metody
+     *                       get{@code getResponce} na objektu databáze.
      */
     public void updeteData(ADatabaseEntry aDatabaseEntry, Object token) {
         requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry, token));
     }
-    
+
     /**
      * Metoda slouží pro odebrání dat z databáze.
+     * 
      * @param aDatabaseEntry data, která mají být odebrána
-     * @param token pokud bude null, tak se metoda provede bez jaké koliv odpovědi.
-     * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
+     * @param token          pokud bude null, tak se metoda provede bez jaké koliv
+     *                       odpovědi.
+     *                       pokud bude {@param token} nějaké hodnoty, vlákno
+     *                       DatabaseRequester probudí všechna vlákna, která čekají
+     *                       na tomto monitoru a pod tímto objektem ho přidá do mapy
+     *                       odpovědí. Obpověď jde získat zavoláním metody
+     *                       get{@code getResponce} na objektu databáze.
      */
     public void removeData(ADatabaseEntry aDatabaseEntry, Object token) {
         requester.addRequest(new SQLRequest(SQLRequest.delete, aDatabaseEntry, token));
@@ -207,9 +231,15 @@ public class MC_Database extends Database {
 
     /**
      * Metoda slouží pro přidání dat do databáze.
+     * 
      * @param aDatabaseEntry data, která mají být přidána
-     * @param token pokud bude null, tak se metoda provede bez jaké koliv odpovědi.
-     * pokud bude {@param token} nějaké hodnoty, vlákno DatabaseRequester probudí všechna vlákna, která čekají na tomto monitoru a pod tímto objektem ho přidá do mapy odpovědí. Obpověď jde získat zavoláním metody get{@code getResponce} na objektu databáze. 
+     * @param token          pokud bude null, tak se metoda provede bez jaké koliv
+     *                       odpovědi.
+     *                       pokud bude {@param token} nějaké hodnoty, vlákno
+     *                       DatabaseRequester probudí všechna vlákna, která čekají
+     *                       na tomto monitoru a pod tímto objektem ho přidá do mapy
+     *                       odpovědí. Obpověď jde získat zavoláním metody
+     *                       get{@code getResponce} na objektu databáze.
      */
     public void create(ADatabaseEntry aDatabaseEntry, Object token) {
         requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, token));

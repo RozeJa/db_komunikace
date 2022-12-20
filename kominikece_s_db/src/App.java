@@ -11,9 +11,14 @@ public class App {
         Setting.loadSetting();
 
         MC_Database.init(Setting.getSetting());
-        
+
+        MC_Database.getDB().loadCategories();
+        MC_Database.getDB().loadImprevements();
+        MC_Database.getDB().loadProducts();
+
         setFrame(new MainFrame("MC donald"));
     }
+    
 
     // zobrazení okna
     private static void setFrame(JFrame frame) {
