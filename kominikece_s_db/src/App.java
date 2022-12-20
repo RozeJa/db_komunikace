@@ -8,7 +8,7 @@ public class App {
     
     public static void main(String[] args) {
 
-        Setting.getSetting().loadSetting();
+        Setting.loadSetting();
 
         MC_Database.init(Setting.getSetting());
         

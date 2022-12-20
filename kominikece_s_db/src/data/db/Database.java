@@ -204,6 +204,8 @@ public class Database {
     private Map<Object, SQLResponce> responcies = new HashMap<>();
     // nastavení běhu
     private boolean run = true;
+    // počítadlo requestů7
+    private int counter = 0;
 
     public DatabaseRequester(boolean run) {
       setDaemon(true);
@@ -286,6 +288,10 @@ public class Database {
           request.getToken().notifyAll();
         }        
       }
+    }
+
+    public int getNextToken() {
+      return ++counter;
     }
 
     /**
