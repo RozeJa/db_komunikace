@@ -146,7 +146,7 @@ public class Database {
    * @return vrací booleanovou hodnotu, zda se zapsání podařilo
    */
   protected boolean update(ADatabaseEntry entry) {
-    StringBuilder sqlRequest = new StringBuilder("UPDATE " + entry.getTable() + " SET" + entry.getUpdateSQL() + "WHERE " + entry.getPrimaryKey() + " LIMIT 1");
+    StringBuilder sqlRequest = new StringBuilder("UPDATE " + entry.getTable() + " SET " + entry.getUpdateSQL() + " WHERE " + entry.getPrimaryKey() + " LIMIT 1");
     
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString())) {
 
@@ -205,7 +205,7 @@ public class Database {
     // nastavení běhu
     private boolean run = true;
     // počítadlo requestů7
-    private int counter = 0;
+    private Integer counter = 0;
 
     public DatabaseRequester(boolean run) {
       setDaemon(true);
@@ -292,7 +292,9 @@ public class Database {
     }
 
     public int getNextToken() {
-      return ++counter;
+      synchronized(counter) {
+        return ++counter;
+      }
     }
 
     /**
@@ -360,8 +362,8 @@ public class Database {
     }
 
     public SQLResponce(Map<String, ?> primaryKey) {
-      this.primaryKey = primaryKey;
       this.succes = primaryKey == null;
+      this.primaryKey = primaryKey;
     }
 
     public ABuilder getBuilder() {

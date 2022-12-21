@@ -16,6 +16,10 @@ public abstract class ADatabaseEntry {
    public int getId() {
       return id;
    }
+   public void setId(int id) {
+      if (this.id == 0) 
+         this.id = id;
+   }
  
    public void setAvailable(boolean availableVal) {
       this.availableVal = availableVal;
@@ -76,7 +80,7 @@ public abstract class ADatabaseEntry {
         Map<String, Integer> primaryKey = new HashMap<>();
  
         if (rs.next()) {
-           primaryKey.put(ids, rs.getInt(ids));
+           primaryKey.put(ids, rs.getInt(1));
         }
  
         return primaryKey;

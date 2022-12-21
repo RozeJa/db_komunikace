@@ -53,9 +53,7 @@ public class MainFrame extends JFrame {
         datatypes.addMouseListener(selectDataTyps);
         
         add.addActionListener(l -> {
-            // TODO: provést synchronizaci a změnit value v tabulce
             EditForm ef = null;
-            ADatabaseEntry ade = null;
 
             switch (actualDataModel) {
                 case 0:                    
@@ -71,16 +69,43 @@ public class MainFrame extends JFrame {
 
             if (ef != null) {
                 setJDialog(ef);
-                if (ef.isConfirmed())
-                    mc_db.create(ade, null);   
+                if (ef.isConfirmed()) {
+                    ADatabaseEntry ade = ef.getEditedEntry();
+                    int usedModel = actualDataModel;
+                    Thread load = new Thread(() -> {
+                        Object token = mc_db.getNextToken();
+
+                        switch (usedModel) {
+                            case 0:                    
+                                mc_db.addProduct(ade, token);
+                                break;
+                            case 1:
+                                mc_db.addImprovement(ade, token);
+                                break;
+                            case 2:
+                                mc_db.addCategory(ade, token);
+                                break;
+                        }
+                        
+                        synchronized(token) {
+                            try {
+                                token.wait();
+                            } catch (Exception e) {
+                            }
+                        }
+
+                        reprintTable(actualDataModel);
+                    });
+
+                    load.start();   
+                }
             }
-        });
+            });
 
         update.addActionListener(l -> {
             int selectedIndex = dataTable.getSelectedRow();
             
             if (selectedIndex >= 0) {
-                // TODO: provést synchronizaci a změnit value v tabulce
                 EditForm ef = null;
                 ADatabaseEntry ade = null;
 
@@ -103,27 +128,33 @@ public class MainFrame extends JFrame {
                 }
                 if (ef != null) {
                     setJDialog(ef);
-                    if (ef.isConfirmed())
-                        mc_db.updeteData(ade, null);   
+                    if (ef.isConfirmed()) {
+                        mc_db.updeteData(ade, null); 
+                        reprintTable(actualDataModel);
+                    }
                 }
             } 
         });
     
         delete.addActionListener(l -> {
             int selectedIndex = dataTable.getSelectedRow();
+            ADatabaseEntry adtb = null;
             
             if (selectedIndex >= 0) {
-                // TODO: provést synchronizaci a změnit value v tabulce
                 switch (actualDataModel) {
                     case 0:
-                        mc_db.removeProduct(mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        adtb = mc_db.removeProduct(mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
                         break;
                     case 1:
-                        mc_db.removeImprovement(mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        adtb = mc_db.removeImprovement(mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
                         break;
                     case 2:
-                        mc_db.removeCategory(mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        adtb = mc_db.removeCategory(mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
                         break;
+                }
+
+                if (adtb != null) {
+                    reprintTable(actualDataModel);
                 }
             }
         });
@@ -150,11 +181,12 @@ public class MainFrame extends JFrame {
     }
 
     private void fillProducts() {
-        Map<Integer, Product> data = MC_Database.getDB().getProducts();
+        Map<Integer, Product> data = mc_db.getProducts();
+
         if (data == null) 
             data = new TreeMap<>();
 
-        dataTable.setModel(new DefaultTableModel(formatProductData(data), Product.getPropertyes()));
+        dataTable.setModel(new MyTableModel(formatProductData(data), Product.getPropertyes()));
     }
 
     private String[][] formatProductData(Map<Integer, Product> products) {
@@ -165,16 +197,16 @@ public class MainFrame extends JFrame {
             row[0] = String.valueOf(product.getId());
             row[1] = product.getName();
             row[2] = String.valueOf(product.getPrice());
-            row[3] = String.valueOf(product.isAvailable());
+            row[3] = mc_db.getCategories().get(product.getCategory()).getName();
             
             data.add(row);
 
             int j = 0;
             for (Integer improvementID : product) {
                 if (j == 0)
-                    row[4] = MC_Database.getDB().getImprovement(improvementID).getName(); 
+                    row[4] = mc_db.getImprovement(improvementID).getName(); 
                 else 
-                    data.add(new String[] {"","","","",MC_Database.getDB().getImprovement(improvementID).getName()});
+                    data.add(new String[] {"","","", mc_db.getImprovement(improvementID).getName()});
 
                 j++;
             }
@@ -198,20 +230,19 @@ public class MainFrame extends JFrame {
         LinkedList<String[]> data = new LinkedList<>();
 
         for (Improvement improvement : improvements.values()) {
-            String[] row = new String[5]; 
+            String[] row = new String[4]; 
             row[0] = String.valueOf(improvement.getId());
             row[1] = improvement.getName();
             row[2] = String.valueOf(improvement.getPrice());
-            row[3] = String.valueOf(improvement.isAvailable());
             
             data.add(row);
 
             int j = 0;
             for (Integer categoryID : improvement) {
                 if (j == 0)
-                    row[4] = MC_Database.getDB().getImprovement(categoryID).getName(); 
+                    row[3] = MC_Database.getDB().getImprovement(categoryID).getName(); 
                 else 
-                    data.add(new String[] {"","","","",MC_Database.getDB().getCategory(categoryID).getName()});
+                    data.add(new String[] {"","","",MC_Database.getDB().getCategory(categoryID).getName()});
 
                 j++;
             }
@@ -235,10 +266,9 @@ public class MainFrame extends JFrame {
 
         int i = 0;
         for (Category category : categories.values()) {
-            String[] row = new String[5]; 
+            String[] row = new String[2]; 
             row[0] = String.valueOf(category.getId());
             row[1] = category.getName();
-            row[2] = String.valueOf(category.isAvailable());
             
             data[i++] = row;
         }

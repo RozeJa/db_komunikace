@@ -63,7 +63,7 @@ public class Product extends ADatabaseEntry implements Iterable<Integer> {
 
    @Override
    public String getCreateSQL() {
-       return "(" + name + ", " + price + ", " + category + ", " + available + ") VALUES (?, ?, ?, ?)";
+       return "(" + ids + ", " + name + ", " + price + ", " + category + ", " + available + ") VALUES (?, ?, ?, ?, ?)";
    }
 
    @Override
@@ -73,31 +73,31 @@ public class Product extends ADatabaseEntry implements Iterable<Integer> {
 
    @Override
    public String getUpdateSQL() {
-       return name + " = ?, " + price + " = ?," + category + " = ?," + available + " = ?";
+       return name + " = ? , " + price + " = ? ," + category + " = ? ," + available + " = ? ";
    }
 
    @Override
    public String getPrimaryKey() {
-       return  ids + " == " + id;
+       return  ids + " = " + id;
    }
    
    @Override
    public PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException {
-      return fill(ps);
+     ps.setInt(1, id);
+     ps.setString(2, nameVal);
+     ps.setDouble(3, priceVal);
+     ps.setInt(4, categoryId);
+     ps.setBoolean(5, availableVal);
+     return ps;
    }
 
    @Override
    public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
-      return fill(ps);
-   }
-
-   private PreparedStatement fill(PreparedStatement ps) throws SQLException {
-      ps.setInt(1, id);
-      ps.setString(2, nameVal);
-      ps.setDouble(3, priceVal);
-      ps.setInt(4, categoryId);
-      ps.setBoolean(5, availableVal);
-      return ps;
+     ps.setString(1, nameVal);
+     ps.setDouble(2, priceVal);
+     ps.setInt(3, categoryId);
+     ps.setBoolean(4, availableVal);
+     return ps;
    }
 
    @Override
@@ -124,6 +124,6 @@ public class Product extends ADatabaseEntry implements Iterable<Integer> {
 
 
    public static String[] getPropertyes() {
-     return new String[] {"id", "název produktu", "cena", "dostupná", "vypelšení"};
+     return new String[] {"id", "název produktu", "cena", "kategorie", "vypelšení"};
    }
 }

@@ -50,20 +50,25 @@ public class MC_Database extends Database {
         super(setting);
     }
 
+    public Integer getNextToken() {
+        return requester.getNextToken();
+    }
+
     // ###################################################################//
 
     private Map<Integer, Product> products = null;
     private Map<Integer, Category> categories = null;
     private Map<Integer, Improvement> improvements = null;
 
-    // TODO: pokud je property available na false tak ji ani neukládej
     private Runnable loadCategory = () -> {
         categories = new TreeMap<>();
 
         try {
             for (ADatabaseEntry c : read(new Category())) {
-                synchronized (categories) {
-                    categories.put(c.getId(), ((Category) c));
+                if (c.isAvailable()) {
+                    synchronized (categories) {
+                        categories.put(c.getId(), ((Category) c));
+                    }                    
                 }
             }
         } catch (Exception e) {
@@ -75,8 +80,10 @@ public class MC_Database extends Database {
 
         try {
             for (ADatabaseEntry i : read(new Improvement())) {
-                synchronized (improvements) {
-                    improvements.put(i.getId(), ((Improvement) i));
+                if (i.isAvailable()) {
+                    synchronized (improvements) {
+                        improvements.put(i.getId(), ((Improvement) i));
+                    }                    
                 }
             }
         } catch (Exception e) {
@@ -86,8 +93,7 @@ public class MC_Database extends Database {
         try {
             for (ADatabaseEntry iic : read(new ImprovementInCategory())) {
                 synchronized (improvements) {
-                    improvements.get(((ImprovementInCategory) iic).getImprovementId())
-                            .addCategories(((ImprovementInCategory) iic).getCategoryId());
+                    improvements.get(((ImprovementInCategory) iic).getImprovementId()).addCategories(((ImprovementInCategory) iic).getCategoryId());
                 }
             }
         } catch (Exception e) {
@@ -98,9 +104,11 @@ public class MC_Database extends Database {
         products = new TreeMap<>();
 
         try {
-            for (ADatabaseEntry i : read(new Product())) {
-                synchronized (products) {
-                    products.put(i.getId(), ((Product) i));
+            for (ADatabaseEntry p : read(new Product())) {
+                if (p.isAvailable()) {
+                    synchronized (products) {
+                        products.put(p.getId(), ((Product) p));
+                    }                    
                 }
             }
         } catch (Exception e) {
@@ -110,8 +118,7 @@ public class MC_Database extends Database {
         try {
             for (ADatabaseEntry pi : read(new ProductsImprovement())) {
                 synchronized (products) {
-                    products.get(((ProductsImprovement) pi).getProductId())
-                            .addImprovement(((ProductsImprovement) pi).getImprovementId());
+                    products.get(((ProductsImprovement) pi).getProductId()).addImprovement(((ProductsImprovement) pi).getImprovementId());
                 }
             }
         } catch (Exception e) {
@@ -128,9 +135,26 @@ public class MC_Database extends Database {
         return products;
     }
 
-    public void removeProduct(Product product, Object token) {
+    public void addProduct(ADatabaseEntry product, Object token) {
+        Object requestToken = requester.getNextToken();
+
+        Thread creatThread = new Thread(new CreateThread((Map<Integer, ADatabaseEntry>) (Object) products, product, requestToken, token));
+
+        creatThread.start();
+
+        create(product, requestToken);
+    }
+
+    public Product removeProduct(Product product, Object token) {
+        if (product == null) 
+            return null;
+
         product.setAvailable(false);
         updeteData(product, token);
+
+        synchronized(products) {
+            return products.remove(product.getId());
+        }
     }
 
     public Product getProduct(Integer id) {
@@ -154,9 +178,26 @@ public class MC_Database extends Database {
         return categories;
     }
 
-    public void removeCategory(Category category, Object token) {
+    public void addCategory(ADatabaseEntry category, Object token) {
+        Object requestToken = requester.getNextToken();
+
+        Thread creatThread = new Thread(new CreateThread((Map<Integer, ADatabaseEntry>) (Object) categories, category, requestToken, token));
+
+        creatThread.start();
+
+        create(category, requestToken);
+    }
+
+    public Category removeCategory(Category category, Object token) {
+        if (category == null)
+            return null;
+
         category.setAvailable(false);
         updeteData(category, token);
+
+        synchronized(categories) {
+            return categories.remove(category.getId());
+        }
     }
 
     public Category getCategory(Integer id) {
@@ -180,9 +221,26 @@ public class MC_Database extends Database {
         return improvements;
     }
 
-    public void removeImprovement(Improvement improvement, Object token) {
+    public void addImprovement(ADatabaseEntry improvement, Object token) {
+        Object requestToken = requester.getNextToken();
+
+        Thread creatThread = new Thread(new CreateThread((Map<Integer, ADatabaseEntry>) (Object) improvements, improvement, requestToken, token));
+
+        creatThread.start();
+
+        create(improvement, requestToken);
+    }
+
+    public Improvement removeImprovement(Improvement improvement, Object token) {
+        if (improvement == null)
+            return null;
+
         improvement.setAvailable(false);
         updeteData(improvement, token);
+
+        synchronized(improvements) {
+            return improvements.remove(improvement.getId());
+        }
     }
 
     public Improvement getImprovement(Integer id) {
@@ -242,6 +300,42 @@ public class MC_Database extends Database {
      *                       get{@code getResponce} na objektu databáze.
      */
     public void create(ADatabaseEntry aDatabaseEntry, Object token) {
+
         requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, token));
+    }
+
+    private class CreateThread implements Runnable {
+
+        private Object requestToken, token;
+        private ADatabaseEntry created;
+        private Map<Integer, ADatabaseEntry> coll;
+
+        public CreateThread(Map<Integer, ADatabaseEntry> coll, ADatabaseEntry created, Object requestToken, Object token) {
+            this.token = token;
+            this.requestToken = requestToken;
+            this.created = created;
+            this.coll = coll;
+        }
+
+        @Override
+        public void run() {
+            synchronized(requestToken) {
+                try {
+                    requestToken.wait();
+                } catch (Exception e) {
+                }
+
+                SQLResponce responce = requester.getResponce(requestToken);
+
+                created.setId((Integer) responce.getPrimaryKey().get(ADatabaseEntry.ids));
+                synchronized(coll) {
+                    coll.put((Integer) responce.getPrimaryKey().get(ADatabaseEntry.ids), created);
+                }
+            }
+
+            synchronized(token) {
+                token.notifyAll();
+            }
+        }
     }
 }

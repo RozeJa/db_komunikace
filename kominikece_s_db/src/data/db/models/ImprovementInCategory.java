@@ -42,7 +42,7 @@ public class ImprovementInCategory extends ADatabaseEntry {
     }
     @Override
     public String getUpdateSQL() {
-        return improvement + " = ?, " + category + " = ?";
+        return improvement + " = ? , " + category + " = ? ";
     }
     
     @Override
@@ -74,7 +74,7 @@ public class ImprovementInCategory extends ADatabaseEntry {
 
     @Override
     public String getPrimaryKey() {
-        return category + " == " + categoryId + "AND " + improvement + " == " + improvementId;
+        return category + " = " + categoryId + "AND " + improvement + " = " + improvementId;
     }
 
     @Override

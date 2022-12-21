@@ -50,7 +50,7 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
    
    @Override
    public String getCreateSQL() {
-       return "(" + name + ", " + price + ", " + available + ") VALUES (?, ?, ?)";
+       return "(" + ids + ", " + name + ", " + price + ", " + available + ") VALUES (?, ?, ?, ?)";
    }
 
    @Override
@@ -60,20 +60,11 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
 
    @Override
    public String getUpdateSQL() {
-       return name + " = ?, " + price  + " = ?," + available + " = ?";
+       return name + " = ? , " + price  + " = ? ," + available + " = ? ";
    }
 
    @Override
    public PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException {
-      return fill(ps);
-   }
-
-   @Override
-   public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
-      return fill(ps);
-   }
-
-   private PreparedStatement fill(PreparedStatement ps) throws SQLException {
       ps.setInt(1, id);
       ps.setString(2, nameVal);
       ps.setDouble(3, priceVal);
@@ -82,8 +73,16 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
    }
 
    @Override
+   public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
+      ps.setString(1, nameVal);
+      ps.setDouble(2, priceVal);
+      ps.setBoolean(3, availableVal);
+      return ps;
+   }
+
+   @Override
    public String getPrimaryKey() {
-       return  ids + " == " + id;
+       return  ids + " = " + id;
    }
 
    @Override
@@ -109,6 +108,6 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
 
 
    public static String[] getPropertyes() {
-      return new String[] {"id", "název vylepšení", "cena", "dostupná", "kategorie"};
+      return new String[] {"id", "název vylepšení", "cena", "kategorie"};
    }
 }

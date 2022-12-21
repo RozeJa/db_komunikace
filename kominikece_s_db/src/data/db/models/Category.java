@@ -26,7 +26,7 @@ public class Category extends ADatabaseEntry {
 
    @Override
    public String getCreateSQL() {
-       return "(" + name + ", " + available + ") VALUES (?, ?)";
+       return "(" + ids + ", " + name + ", " + available + ") VALUES (?, ?, ?)";
    }
 
    @Override
@@ -41,15 +41,6 @@ public class Category extends ADatabaseEntry {
 
    @Override
    public PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException {
-      return fill(ps);
-   }
-
-   @Override
-   public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
-      return fill(ps);
-   }
-
-   private PreparedStatement fill(PreparedStatement ps) throws SQLException {
       ps.setInt(1, id);
       ps.setString(2, nameVal);
       ps.setBoolean(3, availableVal);
@@ -57,8 +48,15 @@ public class Category extends ADatabaseEntry {
    }
 
    @Override
+   public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
+      ps.setString(1, nameVal);
+      ps.setBoolean(2, availableVal);
+      return ps;
+   }
+
+   @Override
    public String getPrimaryKey() {
-       return  ids + " == " + id;
+       return  ids + " = " + id;
    }
 
    @Override
@@ -68,6 +66,6 @@ public class Category extends ADatabaseEntry {
 
 
    public static String[] getPropertyes() {
-      return new String[] {"id", "název kategorie", "dostupná"};
+      return new String[] {"id", "název kategorie"};
    }
 }

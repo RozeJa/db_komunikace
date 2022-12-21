@@ -42,7 +42,7 @@ public class ProductsImprovement extends ADatabaseEntry {
     }
     @Override
     public String getUpdateSQL() {
-        return improvement + " = ?, " + product + " = ?";
+        return improvement + " = ? , " + product + " = ? ";
     }
     
     @Override
@@ -74,7 +74,7 @@ public class ProductsImprovement extends ADatabaseEntry {
 
     @Override
     public String getPrimaryKey() {
-        return product + " == " + productId + "AND " + improvement + " == " + improvementId;
+        return product + " = " + productId + "AND " + improvement + " = " + improvementId;
     }
 
     @Override

@@ -56,6 +56,8 @@ public class ProductForm extends EditForm {
         contentPane.add(nameLabel, gbc);
 
         gbc.gridx++;
+        if (editedEntry != null) 
+            name.setText(((Product) editedEntry).getName());
         contentPane.add(name, gbc);
 
         gbc.gridx = 0;
@@ -63,6 +65,8 @@ public class ProductForm extends EditForm {
         contentPane.add(priceLabel, gbc);
 
         gbc.gridx++;
+        if (editedEntry != null) 
+            price.setText(((Product) editedEntry).getPrice() + "");
         contentPane.add(price, gbc);
         
         gbc.gridx = 0;
@@ -70,6 +74,8 @@ public class ProductForm extends EditForm {
         contentPane.add(categoryLabel, gbc);
 
         gbc.gridx++;
+        if (editedEntry != null) 
+            category.setSelectedItem(categories.get(((Product) editedEntry).getCategory()).getName());
         contentPane.add(category, gbc);
 
         int gridy = gbc.gridy;
@@ -167,8 +173,10 @@ public class ProductForm extends EditForm {
         } else 
             return false;
 
-        for (JComboBox<String> jcob : listOfComboboxs) {
-            ((Product) editedEntry).addImprovement(improvmentAsIndexis.get(jcob.getSelectedIndex()).getId());
+        for (JComboBox<String> jcob : listOfComboboxs) {            
+            Improvement i = improvmentAsIndexis.get(jcob.getSelectedIndex());
+            if (i != null)
+                ((Product) editedEntry).addImprovement(i.getId());
         }
 
         editedEntry.setAvailable(true);
