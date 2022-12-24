@@ -293,7 +293,7 @@ public class MainFrame extends JFrame {
 
         container.setLayout(new GridLayout(1,2));
     
-        datatypes = new JList<>(new String[] {"Produkty", "Vypelšení", "Kategorie"});
+        datatypes = new JList<>(new String[] {"Produkty", "Vylepšení", "Kategorie"});
         datatypesSP = new JScrollPane(datatypes);
 
         JPanel midPan = new JPanel(new GridLayout(1,3));

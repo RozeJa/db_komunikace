@@ -138,7 +138,7 @@ public class MC_Database extends Database {
     public void addProduct(ADatabaseEntry product, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread((Map<Integer, ADatabaseEntry>) (Object) products, product, requestToken, token));
+        Thread creatThread = new Thread(new CreateThread(products, product, requestToken, token));
 
         creatThread.start();
 
@@ -181,7 +181,7 @@ public class MC_Database extends Database {
     public void addCategory(ADatabaseEntry category, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread((Map<Integer, ADatabaseEntry>) (Object) categories, category, requestToken, token));
+        Thread creatThread = new Thread(new CreateThread(categories, category, requestToken, token));
 
         creatThread.start();
 
@@ -224,7 +224,7 @@ public class MC_Database extends Database {
     public void addImprovement(ADatabaseEntry improvement, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread((Map<Integer, ADatabaseEntry>) (Object) improvements, improvement, requestToken, token));
+        Thread creatThread = new Thread(new CreateThread(improvements, improvement, requestToken, token));
 
         creatThread.start();
 
@@ -310,11 +310,11 @@ public class MC_Database extends Database {
         private ADatabaseEntry created;
         private Map<Integer, ADatabaseEntry> coll;
 
-        public CreateThread(Map<Integer, ADatabaseEntry> coll, ADatabaseEntry created, Object requestToken, Object token) {
+        public CreateThread(Map<Integer, ? extends ADatabaseEntry> coll, ADatabaseEntry created, Object requestToken, Object token) {
             this.token = token;
             this.requestToken = requestToken;
             this.created = created;
-            this.coll = coll;
+            this.coll = (Map<Integer, ADatabaseEntry>) coll;
         }
 
         @Override
