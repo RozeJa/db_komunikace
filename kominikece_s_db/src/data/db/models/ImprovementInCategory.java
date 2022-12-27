@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImprovementInCategory extends ADatabaseEntry {
+public class ImprovementInCategory extends ADatabaseEntry implements SubTable {
     private int improvementId, categoryId;
 
     public static final String improvement = "vylepseni", category = "kategorie";
@@ -80,5 +80,26 @@ public class ImprovementInCategory extends ADatabaseEntry {
     @Override
     public String getTable() {
         return "VylepseniProKetegorie";
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new ImprovementInCategory(improvementId, categoryId);
+    }
+    @Override
+    public int getOwnedId() {
+        return categoryId;
+    }
+    @Override
+    public void setOwnedId(int ownedId) {
+        categoryId = ownedId;
+    }
+    @Override
+    public int getOwnerId() {
+        return improvementId;
+    }
+    @Override
+    public void setOwnerId(int ownerId) {
+        improvementId = ownerId;
     }
 }

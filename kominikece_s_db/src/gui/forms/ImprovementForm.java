@@ -77,6 +77,7 @@ public class ImprovementForm extends EditForm {
             for (Integer i : (Improvement) editedEntry) {
                 addComboBox(categories.get(i));
             }
+            addComboBox(null);
         }
     }
 

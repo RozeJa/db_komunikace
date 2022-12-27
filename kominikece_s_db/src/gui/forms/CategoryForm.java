@@ -29,6 +29,8 @@ public class CategoryForm extends EditForm {
         contentPane.add(nameLabel, gbc);
 
         gbc.gridx++;
+        if (editedEntry != null) 
+            name.setText(((Category) editedEntry).getName());
         contentPane.add(name, gbc);
 
         int gridy = gbc.gridy;

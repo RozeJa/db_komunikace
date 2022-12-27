@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 
-public class Product extends ADatabaseEntry implements Iterable<Integer> {
+public class Product extends ADatabaseEntry implements Iterable<Integer>, Composite {
 
      public static final String name = "nazev", price = "cena", category = "kategorie";
    

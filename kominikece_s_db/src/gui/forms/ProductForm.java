@@ -94,6 +94,7 @@ public class ProductForm extends EditForm {
             for (Integer i : (Product) editedEntry) {
                 addComboBox(improvements.get(i));
             }
+            addComboBox(null);
         }
     }
 

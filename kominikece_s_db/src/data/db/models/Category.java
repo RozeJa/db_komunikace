@@ -64,7 +64,6 @@ public class Category extends ADatabaseEntry {
        return "Kategorie";
    }
 
-
    public static String[] getPropertyes() {
       return new String[] {"id", "název kategorie"};
    }

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Improvement extends ADatabaseEntry implements Iterable<Integer> {
+public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Composite {
 
    public static final String name = "nazev", price = "cena";
 

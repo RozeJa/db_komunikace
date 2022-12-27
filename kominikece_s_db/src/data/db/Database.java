@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import data.Setting;
 import data.db.buildesr.ABuilder;
-import data.db.models.ADatabaseEntry;
+import data.db.models.IDatabaseEntry;
 
 public class Database {
 
@@ -80,7 +80,7 @@ public class Database {
    * @return vrací instanci Buildru pro konkrétní model. Jen nutné dodržet jmenou konvenci: model = Model, builder = ModelBuilder
    * @throws Exception pokud se nepodaří vytvořit Builder
    */
-  protected ABuilder read(ADatabaseEntry type, List<WhereCondition> conditions) throws Exception {
+  protected ABuilder read(IDatabaseEntry type, List<WhereCondition> conditions) throws Exception {
     StringBuilder sqlRequest = new StringBuilder("SELECT " + type.getReadSQL() + " FROM " + type.getTable()); 
     
     if (!conditions.isEmpty()) {
@@ -102,7 +102,7 @@ public class Database {
    * @return vrací instanci Buildru pro konkrétní model. Jen nutné dodržet jmenou konvenci: model = Model, builder = ModelBuilder
    * @throws Exception pokud se nepodaří vytvořit Builder
    */
-  protected ABuilder read(ADatabaseEntry type) throws Exception {
+  protected ABuilder read(IDatabaseEntry type) throws Exception {
     return read(type, new LinkedList<>());
   }
  
@@ -113,7 +113,7 @@ public class Database {
    * @return vrací instanci Buildru pro konkrétní model. Jen nutné dodržet jmenou konvenci: model = Model, builder = ModelBuilder
    * @throws Exception pokud se nepodaří vytvořit Builder
    */
-  private ABuilder getBuilder(ResultSet rs, ADatabaseEntry type) throws Exception {
+  private ABuilder getBuilder(ResultSet rs, IDatabaseEntry type) throws Exception {
     ABuilder builder = (ABuilder) Class.forName(type.getClass().getName().replace("models", "buildesr") + "Builder").getConstructor().newInstance();
 
     builder.setResultSet(rs);
@@ -126,7 +126,7 @@ public class Database {
    * @param entry instance, musí rozšiřovat ADatabaseEntry
    * @return vrací booleanovou hodnotu, zda se zapsání podařilo
    */
-  protected Map<String, ?> create(ADatabaseEntry entry) {
+  protected Map<String, ?> create(IDatabaseEntry entry) {
     String sqlRequest = "INSERT INTO " + entry.getTable() + entry.getCreateSQL();
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString(), Statement.RETURN_GENERATED_KEYS)) {
@@ -145,7 +145,7 @@ public class Database {
    * @param entry instance modelu, která obsahuje data
    * @return vrací booleanovou hodnotu, zda se zapsání podařilo
    */
-  protected boolean update(ADatabaseEntry entry) {
+  protected boolean update(IDatabaseEntry entry) {
     StringBuilder sqlRequest = new StringBuilder("UPDATE " + entry.getTable() + " SET " + entry.getUpdateSQL() + " WHERE " + entry.getPrimaryKey() + " LIMIT 1");
     
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest.toString())) {
@@ -162,7 +162,7 @@ public class Database {
    * @param entry data, která se mají odebrat
    * @return vrací booleanovou hodnotu, zda se smazání podařilo
    */
-  protected boolean delete(ADatabaseEntry entry) {
+  protected boolean delete(IDatabaseEntry entry) {
     String sqlRequest = "DELETE FROM " + entry.getTable() + "WHERE" + entry.getPrimaryKey() + "LIMIT 1";
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest)) {
@@ -308,13 +308,13 @@ public class Database {
   // Třída slouží jako nosič dat o dotazu
   protected class SQLRequest {
     public static final String create = "create", read = "read", update = "updete", delete = "delete";
-    private Object token;
+    private Object token = null;
     private String method;
-    private ADatabaseEntry data;
+    private IDatabaseEntry data;
     private List<WhereCondition> whereConditions;
     private boolean responceNeaded = false;
 
-    public SQLRequest(String method, ADatabaseEntry data, Object token) {
+    public SQLRequest(String method, IDatabaseEntry data, Object token) {
       this.data = data;
       this.method = method;
       if (token != null) {
@@ -323,7 +323,7 @@ public class Database {
       } 
     }
 
-    public SQLRequest(String method, ADatabaseEntry data, List<WhereCondition> whereConditions, Object token) {
+    public SQLRequest(String method, IDatabaseEntry data, List<WhereCondition> whereConditions, Object token) {
       this.data = data;
       this.method = method;
       if (token != null) {
@@ -336,7 +336,7 @@ public class Database {
     public String getMethod() {
         return method;
     }
-    public ADatabaseEntry getData() {
+    public IDatabaseEntry getData() {
         return data;
     }
     public Object getToken() {

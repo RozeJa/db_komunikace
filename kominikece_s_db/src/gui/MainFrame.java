@@ -206,7 +206,7 @@ public class MainFrame extends JFrame {
                 if (j == 0)
                     row[4] = mc_db.getImprovement(improvementID).getName(); 
                 else 
-                    data.add(new String[] {"","","", mc_db.getImprovement(improvementID).getName()});
+                    data.add(new String[] {"","","", "", mc_db.getImprovement(improvementID).getName()});
 
                 j++;
             }
@@ -220,10 +220,8 @@ public class MainFrame extends JFrame {
         Map<Integer, Improvement> data = MC_Database.getDB().getImprovements();
         if (data == null) 
             data = new TreeMap<>();
-
-        dataTable = new JTable(formatImprovementData(data), Improvement.getPropertyes());
-
-        dataTableSP.setViewportView(dataTable);
+        
+        dataTable.setModel(new MyTableModel(formatImprovementData(data), Improvement.getPropertyes()));
     }
 
     private String[][] formatImprovementData(Map<Integer, Improvement> improvements) {
@@ -240,7 +238,7 @@ public class MainFrame extends JFrame {
             int j = 0;
             for (Integer categoryID : improvement) {
                 if (j == 0)
-                    row[3] = MC_Database.getDB().getImprovement(categoryID).getName(); 
+                    row[3] = MC_Database.getDB().getCategory(categoryID).getName(); 
                 else 
                     data.add(new String[] {"","","",MC_Database.getDB().getCategory(categoryID).getName()});
 
@@ -256,9 +254,7 @@ public class MainFrame extends JFrame {
         if (data == null) 
             data = new TreeMap<>();
 
-        dataTable = new JTable(formatCategoryData(data), Category.getPropertyes());
-
-        dataTableSP.setViewportView(dataTable);
+        dataTable.setModel(new MyTableModel(formatCategoryData(data), Category.getPropertyes()));
     }
 
     private String[][] formatCategoryData(Map<Integer, Category> categories) {
