@@ -88,7 +88,7 @@ public class ImprovementInCategory extends ADatabaseEntry implements SubTable, C
     }
     @Override
     public int getOwnedId() {
-        return categoryId;
+        return getCategoryId();
     }
     @Override
     public void setOwnedId(int ownedId) {
@@ -96,7 +96,7 @@ public class ImprovementInCategory extends ADatabaseEntry implements SubTable, C
     }
     @Override
     public int getOwnerId() {
-        return improvementId;
+        return getImprovementId();
     }
     @Override
     public void setOwnerId(int ownerId) {

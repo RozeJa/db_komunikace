@@ -1,18 +1,13 @@
 package data.db;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.swing.text.StyledEditorKit.ForegroundAction;
-import javax.xml.namespace.QName;
-
 import data.Setting;
 import data.db.models.IDatabaseEntry;
-import data.db.buildesr.ABuilder;
 import data.db.models.ADatabaseEntry;
 import data.db.models.Category;
 import data.db.models.Composite;
@@ -61,7 +56,7 @@ public class MC_Database extends Database {
         super(setting);
     }
 
-    public Integer getNextToken() {
+    public Object getNextToken() {
         return requester.getNextToken();
     }
 
@@ -108,11 +103,9 @@ public class MC_Database extends Database {
         }
 
         if (categoryLoad != null) {
-            if (categoryLoad.isAlive()) {
-                try {
-                    categoryLoad.join();
-                } catch (Exception e) {
-                }
+            try {
+                categoryLoad.join();
+            } catch (Exception e) {
             }
         }
 

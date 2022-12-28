@@ -16,7 +16,7 @@ public abstract class EditForm extends JDialog {
     
     protected JButton confirm = new JButton("Potvrdit"), exit = new JButton("Zrušit");
 
-    public EditForm(ADatabaseEntry editedEntry) {
+    protected EditForm(ADatabaseEntry editedEntry) {
         this.editedEntry = editedEntry;
     }
 

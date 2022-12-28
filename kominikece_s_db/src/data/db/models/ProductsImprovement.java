@@ -88,7 +88,7 @@ public class ProductsImprovement extends ADatabaseEntry implements SubTable {
     }
     @Override
     public int getOwnedId() {
-        return improvementId;
+        return getImprovementId();
     }
     @Override
     public void setOwnedId(int ownedId) {
@@ -96,7 +96,7 @@ public class ProductsImprovement extends ADatabaseEntry implements SubTable {
     }
     @Override
     public int getOwnerId() {
-        return productId;
+        return getProductId();
     }
     @Override
     public void setOwnerId(int ownerId) {

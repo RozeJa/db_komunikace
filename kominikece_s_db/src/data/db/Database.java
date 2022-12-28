@@ -93,8 +93,6 @@ public class Database {
 
     PreparedStatement ps = conection.prepareStatement(sqlRequest.toString());
 
-    // TODO: odstraň sys.out
-    System.out.println(sqlRequest.toString());
     return getBuilder(ps.executeQuery(), type);
   }
 
@@ -167,9 +165,6 @@ public class Database {
   protected boolean delete(IDatabaseEntry entry) {
     String sqlRequest = "DELETE FROM " + entry.getTable() + " WHERE " + entry.getPrimaryKey() + " LIMIT 1";
 
-    // TODO: odebrat sys.out
-    System.out.println(sqlRequest);
-
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest)) {
         return ps.executeUpdate() == 1;
     } catch (Exception e) {
@@ -207,8 +202,6 @@ public class Database {
     private Map<Object, SQLResponce> responcies = new HashMap<>();
     // nastavení běhu
     private boolean run = true;
-    // počítadlo requestů7
-    private Integer counter = 0;
 
     public DatabaseRequester(boolean run) {
       setDaemon(true);
@@ -294,10 +287,8 @@ public class Database {
       }
     }
 
-    public int getNextToken() {
-      synchronized(counter) {
-        return ++counter;
-      }
+    public Object getNextToken() {
+      return new Object();
     }
 
     /**
