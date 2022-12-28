@@ -10,4 +10,6 @@ public interface SubTable extends IDatabaseEntry {
     // Vlastnící id je id objektu, který vlastní 
     int getOwnerId();
     void setOwnerId(int ownerId);
+
+    String getOwnerIdPropertyName();
 }

@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import data.db.models.ADatabaseEntry;
+import data.db.models.IDatabaseEntry;
 
-public abstract class ABuilder implements Iterable<ADatabaseEntry> {
+public abstract class ABuilder implements Iterable<IDatabaseEntry> {
 
     protected ResultSet rs;
 
@@ -14,8 +14,8 @@ public abstract class ABuilder implements Iterable<ADatabaseEntry> {
       this.rs = rs;
     }
  
-    public Iterator<ADatabaseEntry> iterator() {
-        return new Iterator<ADatabaseEntry>() {
+    public Iterator<IDatabaseEntry> iterator() {
+        return new Iterator<IDatabaseEntry>() {
             @Override
             public boolean hasNext() {
                 try {
@@ -32,7 +32,7 @@ public abstract class ABuilder implements Iterable<ADatabaseEntry> {
             }
 
             @Override
-            public ADatabaseEntry next() {
+            public IDatabaseEntry next() {
                 try {
                     return build();
                 } catch (Exception e) {
@@ -42,5 +42,5 @@ public abstract class ABuilder implements Iterable<ADatabaseEntry> {
         };
     }
  
-    public abstract ADatabaseEntry build() throws SQLException;
+    public abstract IDatabaseEntry build() throws SQLException;
 }

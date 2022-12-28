@@ -3,6 +3,7 @@ package data.db.models;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -106,8 +107,12 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Co
       };
    }
 
-
    public static String[] getPropertyes() {
       return new String[] {"id", "název vylepšení", "cena", "kategorie"};
+   }
+
+   @Override
+   public Map<ImprovementInCategory, Iterator<Integer>> getComponents() {
+       return Map.of(new ImprovementInCategory(), iterator());
    }
 }

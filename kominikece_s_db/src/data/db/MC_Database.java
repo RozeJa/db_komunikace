@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import data.Setting;
 import data.db.models.IDatabaseEntry;
+import data.db.buildesr.ABuilder;
 import data.db.models.ADatabaseEntry;
 import data.db.models.Category;
 import data.db.models.Composite;
@@ -309,8 +310,11 @@ public class MC_Database extends Database {
     public void updeteData(IDatabaseEntry aDatabaseEntry, Object token) {
         if (aDatabaseEntry instanceof Composite) {
             Map<SubTable, Iterable<Integer>> components = ((Composite) aDatabaseEntry).getComponents();
+
             // projdi každou tabulku
             for (SubTable subTableObj : components.keySet()) {
+                // TODO: načti z db to co si db myslí, že patří k aDatabaseEntry
+                // WhereCondition wc = new WhereCondition(WhereCondition.Operator.NON.toString(), String.valueOf(aDatabaseEntry.getId()), subTableObj.getOwnerIdPropertyName(), WhereCondition.OperationOperator.BETWEEN.toString());
                 // a každou hodnotu v tabulce
                 for (Integer subId : components.get(subTableObj)) {
                     // 1) id co je v db bylo odebráno

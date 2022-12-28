@@ -102,4 +102,8 @@ public class ProductsImprovement extends ADatabaseEntry implements SubTable {
     public void setOwnerId(int ownerId) {
         productId = ownerId;
     }
+    @Override
+    public String getOwnerIdPropertyName() {
+        return product;
+    }
 }

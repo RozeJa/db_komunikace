@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImprovementInCategory extends ADatabaseEntry implements SubTable {
+public class ImprovementInCategory extends ADatabaseEntry implements SubTable, Comparable<ImprovementInCategory> {
     private int improvementId, categoryId;
 
     public static final String improvement = "vylepseni", category = "kategorie";
@@ -101,5 +101,14 @@ public class ImprovementInCategory extends ADatabaseEntry implements SubTable {
     @Override
     public void setOwnerId(int ownerId) {
         improvementId = ownerId;
+    }
+    @Override
+    public String getOwnerIdPropertyName() {
+        return improvement;
+    }
+
+    @Override
+    public int compareTo(ImprovementInCategory o) {
+        return this.toString().compareTo(o.toString());
     }
 }
