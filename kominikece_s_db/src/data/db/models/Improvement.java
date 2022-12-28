@@ -48,7 +48,9 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Co
    public boolean removeCategories(int id) {
       return availableCategories.remove(id);
    }
-   
+   public void removeCategories() {
+      this.availableCategories = new TreeSet<>();
+   }
    @Override
    public String getCreateSQL() {
        return "(" + ids + ", " + name + ", " + price + ", " + available + ") VALUES (?, ?, ?, ?)";
@@ -112,7 +114,8 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Co
    }
 
    @Override
-   public Map<ImprovementInCategory, Iterator<Integer>> getComponents() {
-       return Map.of(new ImprovementInCategory(), iterator());
+   public Map<ImprovementInCategory, Set<Integer>> getComponents() {
+       return Map.of(new ImprovementInCategory(), availableCategories);
    }
+
 }

@@ -11,7 +11,7 @@ public class WhereCondition {
     }
 
     public String getCondition() {
-        return this.oterator + " " + column + " " + operationOperator + " " + value; 
+        return " " + this.oterator + " " + column + " " + operationOperator + " " + value + " "; 
     }
 
     public enum Operator {

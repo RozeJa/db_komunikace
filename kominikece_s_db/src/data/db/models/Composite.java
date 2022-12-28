@@ -1,8 +1,8 @@
 package data.db.models;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public interface Composite extends IDatabaseEntry {
-    Map<? extends SubTable, Iterator<Integer>> getComponents();
+    Map<? extends SubTable, Set<Integer>> getComponents();
 }

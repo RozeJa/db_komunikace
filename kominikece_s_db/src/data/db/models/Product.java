@@ -12,12 +12,11 @@ public class Product extends ADatabaseEntry implements Iterable<Integer>, Compos
 
      public static final String name = "nazev", price = "cena", category = "kategorie";
    
-    private Set<Integer> improvements = new TreeSet<>();
-    private int categoryId;
+     private Set<Integer> improvements = new TreeSet<>();
+     private int categoryId;
 
-    private String nameVal;
-    private double priceVal;
- 
+     private String nameVal;
+     private double priceVal;
 
      public Product(int id, String name, double price, int categoryId, boolean availableVal) {
           nameVal = name;
@@ -58,77 +57,81 @@ public class Product extends ADatabaseEntry implements Iterable<Integer>, Compos
           improvements.add(improvementId); 
      }
  
-   public boolean removeImprovement(int id) {
+     public boolean removeImprovement(int id) {
         return improvements.remove(id);
-   }
+     }
+     public void removeImprovements() {
+          this.improvements = new TreeSet<>();
+     }
 
-   @Override
-   public String getCreateSQL() {
-       return "(" + ids + ", " + name + ", " + price + ", " + category + ", " + available + ") VALUES (?, ?, ?, ?, ?)";
-   }
+     @Override
+     public String getCreateSQL() {
+          return "(" + ids + ", " + name + ", " + price + ", " + category + ", " + available + ") VALUES (?, ?, ?, ?, ?)";
+     }
 
-   @Override
-   public String getReadSQL() {
-       return ids + "," + name + "," + price + "," + category + "," + available;
-   }
+     @Override
+     public String getReadSQL() {
+          return ids + "," + name + "," + price + "," + category + "," + available;
+     }
 
-   @Override
-   public String getUpdateSQL() {
-       return name + " = ? , " + price + " = ? ," + category + " = ? ," + available + " = ? ";
-   }
+     @Override
+     public String getUpdateSQL() {
+          return name + " = ? , " + price + " = ? ," + category + " = ? ," + available + " = ? ";
+     }
 
-   @Override
-   public String getPrimaryKey() {
-       return  ids + " = " + id;
-   }
-   
-   @Override
-   public PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException {
-     ps.setInt(1, id);
-     ps.setString(2, nameVal);
-     ps.setDouble(3, priceVal);
-     ps.setInt(4, categoryId);
-     ps.setBoolean(5, availableVal);
-     return ps;
-   }
+     @Override
+     public String getPrimaryKey() {
+          return  ids + " = " + id;
+     }
+     
+     @Override
+     public PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException {
+          ps.setInt(1, id);
+          ps.setString(2, nameVal);
+          ps.setDouble(3, priceVal);
+          ps.setInt(4, categoryId);
+          ps.setBoolean(5, availableVal);
+          return ps;
+     }
 
-   @Override
-   public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
-     ps.setString(1, nameVal);
-     ps.setDouble(2, priceVal);
-     ps.setInt(3, categoryId);
-     ps.setBoolean(4, availableVal);
-     return ps;
-   }
+     @Override
+     public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
+          ps.setString(1, nameVal);
+          ps.setDouble(2, priceVal);
+          ps.setInt(3, categoryId);
+          ps.setBoolean(4, availableVal);
+          return ps;
+     }
 
-   @Override
-   public String getTable() {
-       return "Produkty";
-   }
-   
-   @Override
-   public Iterator<Integer> iterator() {
-       return new Iterator<Integer>() {
-        private Iterator<Integer> keyIterator = improvements.iterator();
-         @Override
-         public boolean hasNext() {
-             return keyIterator.hasNext();
-         }
+     @Override
+     public String getTable() {
+          return "Produkty";
+     }
+     
+     @Override
+     public Iterator<Integer> iterator() {
+          return new Iterator<Integer>() {
+          private Iterator<Integer> keyIterator = improvements.iterator();
+          @Override
+          public boolean hasNext() {
+               return keyIterator.hasNext();
+          }
 
-         @Override
-         public Integer next() {
-             return keyIterator.next();
-         }
-       };
-   }
+          @Override
+          public Integer next() {
+               return keyIterator.next();
+          }
+          };
+     }
 
-   public static String[] getPropertyes() {
-     return new String[] {"id", "název produktu", "cena", "kategorie", "vypelšení"};
-   }
+     public static String[] getPropertyes() {
+          return new String[] {"id", "název produktu", "cena", "kategorie", "vypelšení"};
+     }
 
-   
-   @Override
-   public Map<ProductsImprovement, Iterator<Integer>> getComponents() {
-       return Map.of(new ProductsImprovement(), iterator());
-   }
+     
+     @Override
+     public Map<ProductsImprovement, Set<Integer>> getComponents() {
+          return Map.of(new ProductsImprovement(), improvements);
+     }
+
 }

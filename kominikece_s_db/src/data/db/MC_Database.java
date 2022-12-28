@@ -1,7 +1,14 @@
 package data.db;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+import javax.xml.namespace.QName;
 
 import data.Setting;
 import data.db.models.IDatabaseEntry;
@@ -114,8 +121,10 @@ public class MC_Database extends Database {
                 synchronized (improvements) {
                     Improvement i = improvements.get(((ImprovementInCategory) iic).getImprovementId());
                     Category c = categories.get(((ImprovementInCategory) iic).getCategoryId());
-                    if (i.isAvailable() && c.isAvailable())
-                        i.addCategories(c.getId());
+                    if (c != null && i != null) {
+                        if (i.isAvailable() && c.isAvailable())
+                            i.addCategories(c.getId());
+                    }
                 }
             }
         } catch (Exception e) {
@@ -144,11 +153,9 @@ public class MC_Database extends Database {
         }
 
         if (improvementLoad != null) {
-            if (improvementLoad.isAlive()) {
-                try {
-                    improvementLoad.join();
-                } catch (Exception e) {
-                }
+            try {
+                improvementLoad.join();
+            } catch (Exception e) {
             }
         }
 
@@ -157,8 +164,10 @@ public class MC_Database extends Database {
                 synchronized (products) {
                     Product p = products.get(((ProductsImprovement) pi).getProductId());
                     Improvement i = improvements.get(((ProductsImprovement) pi).getImprovementId());
-                    if (p.isAvailable() && i.isAvailable())
-                        p.addImprovement(((ProductsImprovement) pi).getImprovementId());
+                    if (p != null && i != null) {
+                        if (p.isAvailable() && i.isAvailable())
+                            p.addImprovement(((ProductsImprovement) pi).getImprovementId());
+                    }
                 }
             }
         } catch (Exception e) {
@@ -309,35 +318,53 @@ public class MC_Database extends Database {
      */
     public void updeteData(IDatabaseEntry aDatabaseEntry, Object token) {
         if (aDatabaseEntry instanceof Composite) {
-            Map<SubTable, Iterable<Integer>> components = ((Composite) aDatabaseEntry).getComponents();
 
-            // projdi každou tabulku
-            for (SubTable subTableObj : components.keySet()) {
-                // TODO: načti z db to co si db myslí, že patří k aDatabaseEntry
-                // WhereCondition wc = new WhereCondition(WhereCondition.Operator.NON.toString(), String.valueOf(aDatabaseEntry.getId()), subTableObj.getOwnerIdPropertyName(), WhereCondition.OperationOperator.BETWEEN.toString());
-                // a každou hodnotu v tabulce
-                for (Integer subId : components.get(subTableObj)) {
-                    // 1) id co je v db bylo odebráno
-                    // 2) id id bylo přidáno
-                    // 3) od co je v db je v kolekci
-                    /*
+            Thread updateThread = new Thread(() -> {
+
+                Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry).getComponents();
+                for (SubTable subTableObj : components.keySet()) {
+                    WhereCondition wc = new WhereCondition(WhereCondition.Operator.NON.toString(), String.valueOf(aDatabaseEntry.getId()), subTableObj.getOwnerIdPropertyName(), WhereCondition.OperationOperator.EQUAL.toString());
+
+                    Set<Integer> dbVals = new TreeSet<>();
                     try {
-                        // naklanuj si vzorový objekt
-                        SubTable subTableObjClon = (SubTable) subTableObj.clone();
-                        
-                        // dosaď informace
-                        subTableObjClon.setOwnedId(subId);
-                        subTableObjClon.setOwnerId(aDatabaseEntry.getId());
-
-                        // zavolej uložení
-                        requester.addRequest(new SQLRequest(SQLRequest.update, subTableObjClon, null));
+                        // PRO každou tabulku si získej z db to co si db myslí, že má instance mít
+                        for (IDatabaseEntry sto : read(subTableObj, List.of(wc))) {
+                            // pokud tu je je to v poha
+                            // pokud tu není z db ho smaž
+                            if (!components.get(subTableObj).contains(((SubTable) sto).getOwnedId())) {
+                                requester.addRequest(new SQLRequest(SQLRequest.delete, sto, null));
+                            } else {
+                                dbVals.add(((SubTable) sto).getOwnedId());
+                            }
+                        }   
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    */
+                    
+                    // projeď to co instance má 
+                    // pokud to není v db přidej to tam 
+                    // pokud to v db je je to v pohodě
+                    for (Integer subId : components.get(subTableObj)) {
+                        if (!dbVals.contains(subId)) {
+                            try {
+                                // naklanuj si vzorový objekt
+                                SubTable subTableObjClon = (SubTable) subTableObj.clone();
+                                
+                                // dosaď informace
+                                subTableObjClon.setOwnedId(subId);
+                                subTableObjClon.setOwnerId(aDatabaseEntry.getId());
+        
+                                // zavolej uložení
+                                requester.addRequest(new SQLRequest(SQLRequest.create, subTableObjClon, null));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }
-            }
+            });
 
+            updateThread.start();
         }
         requester.addRequest(new SQLRequest(SQLRequest.update, aDatabaseEntry, token));
     }
@@ -377,7 +404,7 @@ public class MC_Database extends Database {
         // Rozhranní Composite implementují právě takové Modely, které potřebují podobným způsobem mapovat data
         if (aDatabaseEntry instanceof Composite) {
             // získej všechny tabulky, které je třeba vytvořit
-            Map<SubTable, Iterable<Integer>> components = ((Composite) aDatabaseEntry).getComponents();
+            Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry).getComponents();
             // projdi každou tabulku
             for (SubTable subTableObj : components.keySet()) {
                 // a každou hodnotu v tabulce

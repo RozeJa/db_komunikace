@@ -7,6 +7,6 @@ import data.db.models.ProductsImprovement;
 public class ProductsImprovementBuilder extends ABuilder {
     @Override
     public ProductsImprovement build() throws SQLException {
-        return new ProductsImprovement(rs.getInt(ProductsImprovement.improvement), rs.getInt(ProductsImprovement.product));
+        return new ProductsImprovement(rs.getInt(ProductsImprovement.product), rs.getInt(ProductsImprovement.improvement));
     }
 }

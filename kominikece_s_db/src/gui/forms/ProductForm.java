@@ -116,7 +116,7 @@ public class ProductForm extends EditForm {
     private void addComboBox(Improvement imp) {
         gbc.gridx = 0;
         gbc.gridy++;
-        contentPane.add(improvementLabel, gbc);
+        contentPane.add(new JLabel(improvementLabel.getText()), gbc);
 
         gbc.gridx++;
 
@@ -174,6 +174,7 @@ public class ProductForm extends EditForm {
         } else 
             return false;
 
+        ((Product) editedEntry).removeImprovements();
         for (JComboBox<String> jcob : listOfComboboxs) {            
             Improvement i = improvmentAsIndexis.get(jcob.getSelectedIndex());
             if (i != null)

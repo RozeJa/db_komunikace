@@ -74,7 +74,7 @@ public class ProductsImprovement extends ADatabaseEntry implements SubTable {
 
     @Override
     public String getPrimaryKey() {
-        return product + " = " + productId + "AND " + improvement + " = " + improvementId;
+        return product + " = " + productId + " AND " + improvement + " = " + improvementId;
     }
 
     @Override

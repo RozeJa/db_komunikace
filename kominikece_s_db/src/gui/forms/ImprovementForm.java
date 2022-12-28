@@ -84,7 +84,7 @@ public class ImprovementForm extends EditForm {
     private void addComboBox(Category cat) {
         gbc.gridx = 0;
         gbc.gridy++;
-        contentPane.add(categoryLabel, gbc);
+        contentPane.add(new JLabel(categoryLabel.getText()), gbc);
 
         gbc.gridx++;
 
@@ -137,6 +137,7 @@ public class ImprovementForm extends EditForm {
         } else 
             return false;
 
+        ((Improvement) editedEntry).removeCategories();
         for (JComboBox<String> jcob : listOfComboboxs) {
             Category c = categoriesAsIndexis.get(jcob.getSelectedIndex());
             if (c != null)

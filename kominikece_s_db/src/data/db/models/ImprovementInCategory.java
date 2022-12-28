@@ -74,7 +74,7 @@ public class ImprovementInCategory extends ADatabaseEntry implements SubTable, C
 
     @Override
     public String getPrimaryKey() {
-        return category + " = " + categoryId + "AND " + improvement + " = " + improvementId;
+        return category + " = " + categoryId + " AND " + improvement + " = " + improvementId;
     }
 
     @Override

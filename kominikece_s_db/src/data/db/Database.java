@@ -84,7 +84,7 @@ public class Database {
     StringBuilder sqlRequest = new StringBuilder("SELECT " + type.getReadSQL() + " FROM " + type.getTable()); 
     
     if (!conditions.isEmpty()) {
-      sqlRequest.append("WHERE");
+      sqlRequest.append(" WHERE");
     }
 
     for (WhereCondition whereCondition : conditions) {
@@ -93,6 +93,8 @@ public class Database {
 
     PreparedStatement ps = conection.prepareStatement(sqlRequest.toString());
 
+    // TODO: odstraň sys.out
+    System.out.println(sqlRequest.toString());
     return getBuilder(ps.executeQuery(), type);
   }
 
@@ -163,11 +165,12 @@ public class Database {
    * @return vrací booleanovou hodnotu, zda se smazání podařilo
    */
   protected boolean delete(IDatabaseEntry entry) {
-    String sqlRequest = "DELETE FROM " + entry.getTable() + "WHERE" + entry.getPrimaryKey() + "LIMIT 1";
+    String sqlRequest = "DELETE FROM " + entry.getTable() + " WHERE " + entry.getPrimaryKey() + " LIMIT 1";
+
+    // TODO: odebrat sys.out
+    System.out.println(sqlRequest);
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest)) {
-        ps.executeUpdate();
-
         return ps.executeUpdate() == 1;
     } catch (Exception e) {
       e.printStackTrace();
