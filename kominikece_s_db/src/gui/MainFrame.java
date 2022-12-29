@@ -3,7 +3,6 @@ package gui;
 import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 import data.db.MC_Database;
 import data.db.models.ADatabaseEntry;
@@ -157,10 +156,6 @@ public class MainFrame extends JFrame {
                     reprintTable(actualDataModel);
                 }
             }
-        });
-
-        dataTable.getModel().addTableModelListener(l -> {
-            // TODO: full stack vyhledávání
         });
     }
 

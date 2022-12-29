@@ -61,7 +61,6 @@ public class Setting implements Iterable<String> {
                 setting.setAttribute(parsed.get(0), parsed.get(1));
             }
         } catch (Exception e) {
-            // TODO
         }
 
         if (buildSetting) {
@@ -88,7 +87,6 @@ public class Setting implements Iterable<String> {
 
             ExportToTXT.export(settFile.getAbsolutePath(), data, false);
         } catch (Exception e) {
-            // TODO
         }
     }
 }

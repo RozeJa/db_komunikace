@@ -53,8 +53,9 @@ public class Product extends ADatabaseEntry implements Iterable<Integer>, Compos
           return categoryId;
      }
 
-     public void addImprovement(int improvementId) {
-          improvements.add(improvementId); 
+     public void addImprovement(int improvementId, Set<Integer> improvementsCategoriesId) {
+          if (improvementsCategoriesId.contains(categoryId))
+               improvements.add(improvementId); 
      }
  
      public boolean removeImprovement(int id) {

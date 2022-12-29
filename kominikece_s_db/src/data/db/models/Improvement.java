@@ -44,7 +44,9 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Co
    public void addCategories(int categories) {
       availableCategories.add(categories);
    }
- 
+   public Set<Integer> getCategories() {
+      return availableCategories;
+   }
    public boolean removeCategories(int id) {
       return availableCategories.remove(id);
    }

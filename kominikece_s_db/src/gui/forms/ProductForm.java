@@ -178,7 +178,7 @@ public class ProductForm extends EditForm {
         for (JComboBox<String> jcob : listOfComboboxs) {            
             Improvement i = improvmentAsIndexis.get(jcob.getSelectedIndex());
             if (i != null)
-                ((Product) editedEntry).addImprovement(i.getId());
+                ((Product) editedEntry).addImprovement(i.getId(), i.getCategories());
         }
 
         editedEntry.setAvailable(true);

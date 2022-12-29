@@ -159,7 +159,7 @@ public class MC_Database extends Database {
                     Improvement i = improvements.get(((ProductsImprovement) pi).getImprovementId());
                     if (p != null && i != null) {
                         if (p.isAvailable() && i.isAvailable())
-                            p.addImprovement(((ProductsImprovement) pi).getImprovementId());
+                            p.addImprovement(((ProductsImprovement) pi).getImprovementId(), i.getCategories());
                     }
                 }
             }
