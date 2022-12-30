@@ -125,13 +125,14 @@ public class ProductForm extends EditForm {
         gbc.gridx++;
 
         JComboBox<String> jcb = new JComboBox<>(arrImprovement);
+        jcb.addKeyListener(getKeyListener());
         listOfComboboxs.add(jcb);
         if (imp != null) 
             jcb.setSelectedItem(imp.getName());
         contentPane.add(jcb, gbc);
 
         jcb.addActionListener(l -> {
-            if (listOfComboboxs.get(listOfComboboxs.size()-1).getSelectedIndex() != 0) {
+            if (listOfComboboxs.get(listOfComboboxs.size()-1).getSelectedIndex() > 0) {
                 addComboBox(null);
             }
         });
@@ -151,15 +152,22 @@ public class ProductForm extends EditForm {
     }
 
     @Override
+    protected void onConfirm() {           
+        if (setData()) {
+            this.confirmed = true;
+            setVisible(false);
+        }
+    }
+
+    @Override
     protected void initFunctions() {
         confirm.addActionListener(l -> {
-            
-            if (setData()) {
-                this.confirmed = true;
-                setVisible(false);
-            }
+            onConfirm();
         });
         exit.addActionListener(l -> setVisible(false));
+        price.addKeyListener(getKeyListener());
+        name.addKeyListener(getKeyListener());
+        category.addKeyListener(getKeyListener());
     }
 
     private boolean setData() {

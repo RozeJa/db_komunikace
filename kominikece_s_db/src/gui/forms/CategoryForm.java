@@ -5,6 +5,8 @@ import data.db.models.Category;
 import java.util.Set;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class CategoryForm extends EditForm { 
     private JTextField name = new JTextField(12);
@@ -52,15 +54,20 @@ public class CategoryForm extends EditForm {
     }
 
     @Override
+    protected void onConfirm() {           
+        if (setData()) {
+            this.confirmed = true;
+            setVisible(false);
+        }
+    }
+
+    @Override
     protected void initFunctions() {
         confirm.addActionListener(l -> {
-            
-            if (setData()) {
-                this.confirmed = true;
-                setVisible(false);
-            }
+            onConfirm();
         });
         exit.addActionListener(l -> setVisible(false));
+        name.addKeyListener(getKeyListener());
     }
 
     private boolean setData() {

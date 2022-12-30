@@ -6,6 +6,9 @@ import data.db.models.ADatabaseEntry;
 import java.awt.*;
 import javax.swing.*;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 public abstract class EditForm extends JDialog {
     protected ADatabaseEntry editedEntry;
     protected boolean confirmed = false;
@@ -19,6 +22,25 @@ public abstract class EditForm extends JDialog {
     protected EditForm(ADatabaseEntry editedEntry) {
         this.editedEntry = editedEntry;
     }
+
+    protected KeyListener getKeyListener() {
+        return new KeyListener() {  
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (KeyEvent.VK_ENTER  == e.getKeyCode()) {
+                    onConfirm();
+                }  
+            }
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+        };
+    }
+
+    protected abstract void onConfirm();
 
     protected abstract void initComponents();
 

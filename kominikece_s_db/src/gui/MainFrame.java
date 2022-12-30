@@ -93,6 +93,7 @@ public class MainFrame extends JFrame {
                             try {
                                 token.wait();
                             } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
 

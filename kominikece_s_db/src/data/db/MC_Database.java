@@ -180,11 +180,11 @@ public class MC_Database extends Database {
     public void addProduct(IDatabaseEntry product, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread(products, product, requestToken, token));
+        Thread creatThread = new Thread(new CreateThread(products, product, requestToken));
 
         creatThread.start();
 
-        create(product, requestToken);
+        create(product, requestToken, token);
     }
 
     public Product removeProduct(Product product, Object token) {
@@ -223,11 +223,11 @@ public class MC_Database extends Database {
     public void addCategory(IDatabaseEntry category, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread(categories, category, requestToken, token));
+        Thread creatThread = new Thread(new CreateThread(categories, category, requestToken));
 
         creatThread.start();
 
-        create(category, requestToken);
+        create(category, requestToken, token);
     }
 
     public Category removeCategory(Category category, Object token) {
@@ -266,11 +266,11 @@ public class MC_Database extends Database {
     public void addImprovement(IDatabaseEntry improvement, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread(improvements, improvement, requestToken, token));
+        Thread creatThread = new Thread(new CreateThread(improvements, improvement, requestToken));
 
         creatThread.start();
 
-        create(improvement, requestToken);
+        create(improvement, requestToken, token);
     }
 
     public Improvement removeImprovement(Improvement improvement, Object token) {
@@ -390,46 +390,60 @@ public class MC_Database extends Database {
      *                       odpovědí. Obpověď jde získat zavoláním metody
      *                       get{@code getResponce} na objektu databáze.
      */
-    public void create(IDatabaseEntry aDatabaseEntry, Object token) {
+    public void create(IDatabaseEntry aDatabaseEntry, Object requestToken, Object token) {
+        requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, requestToken));
 
         // poku se má zapsat do db nová hodnota je nejprve třeba zjistut, zda se mají zapset data i do jiné tabulky
         // příklad produkt má může mít více vylepšení a vylepšení může být u více produktů 
         // Rozhranní Composite implementují právě takové Modely, které potřebují podobným způsobem mapovat data
         if (aDatabaseEntry instanceof Composite) {
-            // získej všechny tabulky, které je třeba vytvořit
-            Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry).getComponents();
-            // projdi každou tabulku
-            for (SubTable subTableObj : components.keySet()) {
-                // a každou hodnotu v tabulce
-                for (Integer subId : components.get(subTableObj)) {
-                    try {
-                        // naklanuj si vzorový objekt
-                        SubTable subTableObjClon = (SubTable) subTableObj.clone();
-                        
-                        // dosaď informace
-                        subTableObjClon.setOwnedId(subId);
-                        subTableObjClon.setOwnerId(aDatabaseEntry.getId());
+            Thread t = new Thread(() -> {
+                // získej všechny tabulky, které je třeba vytvořit
+                Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry).getComponents();
+                // projdi každou tabulku
+                for (SubTable subTableObj : components.keySet()) {
+                    // a každou hodnotu v tabulce
+                    for (Integer subId : components.get(subTableObj)) {
+                        try {
+                            // naklanuj si vzorový objekt
+                            SubTable subTableObjClon = (SubTable) subTableObj.clone();
+                            
+                            // dosaď informace
+                            subTableObjClon.setOwnedId(subId);
+                            // počkej dokud nebude mít id
+                            synchronized(aDatabaseEntry) {
+                                while (aDatabaseEntry.getId() == 0) {
+                                    try {
+                                        aDatabaseEntry.wait();
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }
+                            subTableObjClon.setOwnerId(aDatabaseEntry.getId());
 
-                        // zavolej uložení
-                        requester.addRequest(new SQLRequest(SQLRequest.create, subTableObjClon, null));
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                            // zavolej uložení
+                            requester.addRequest(new SQLRequest(SQLRequest.create, subTableObjClon, null));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        }
+                synchronized(token) {
+                    token.notifyAll();
+                }
+            });
+            t.start();
+        }   
         
-        requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, token));
     }
 
     private class CreateThread implements Runnable {
 
-        private Object requestToken, token;
+        private Object requestToken;
         private IDatabaseEntry created;
         private Map<Integer, IDatabaseEntry> coll;
 
-        public CreateThread(Map<Integer, ? extends IDatabaseEntry> coll, IDatabaseEntry created, Object requestToken, Object token) {
-            this.token = token;
+        public CreateThread(Map<Integer, ? extends IDatabaseEntry> coll, IDatabaseEntry created, Object requestToken) {
             this.requestToken = requestToken;
             this.created = created;
             this.coll = (Map<Integer, IDatabaseEntry>) coll;
@@ -451,8 +465,8 @@ public class MC_Database extends Database {
                 }
             }
 
-            synchronized(token) {
-                token.notifyAll();
+            synchronized(created) {
+                created.notifyAll();
             }
         }
     }

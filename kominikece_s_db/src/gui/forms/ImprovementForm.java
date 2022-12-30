@@ -93,13 +93,15 @@ public class ImprovementForm extends EditForm {
         gbc.gridx++;
 
         JComboBox<String> jcb = new JComboBox<>(arrCategories);
+        jcb.addKeyListener(getKeyListener());
         listOfComboboxs.add(jcb);
         if (cat != null) 
             jcb.setSelectedItem(cat.getName());
         contentPane.add(jcb, gbc);
 
         jcb.addActionListener(l -> {
-            if (listOfComboboxs.get(listOfComboboxs.size()-1).getSelectedIndex() != 0) {
+            JComboBox jcba = listOfComboboxs.get(listOfComboboxs.size()-1);
+            if (jcba.getSelectedIndex() > 0) {
                 addComboBox(null);
             }
         });
@@ -117,17 +119,23 @@ public class ImprovementForm extends EditForm {
             categoriesAsIndexis.add(c);
         }
     }
+    
+    @Override
+    protected void onConfirm() {
+        if (setData()) {
+            this.confirmed = true;
+            setVisible(false);
+        }
+    }
 
     @Override
     protected void initFunctions() {
         confirm.addActionListener(l -> {
-            
-            if (setData()) {
-                this.confirmed = true;
-                setVisible(false);
-            }
+            onConfirm();
         });
         exit.addActionListener(l -> setVisible(false));
+        price.addKeyListener(getKeyListener());
+        name.addKeyListener(getKeyListener());
     }
 
     private boolean setData() {
