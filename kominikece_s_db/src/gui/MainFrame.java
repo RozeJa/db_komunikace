@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import data.db.MC_Database;
-import data.db.models.ADatabaseEntry;
+import data.db.models.IDatabaseEntry;
 import data.db.models.Category;
 import data.db.models.Improvement;
 import data.db.models.Product;
@@ -17,9 +17,10 @@ import gui.forms.ProductForm;
 import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
-// TODO: mapuj jména k objektům, abys mohl hlídat zda uživatel nezadal, takoví produkt, který existuje
 public class MainFrame extends JFrame {
 
     private Container container;
@@ -32,6 +33,8 @@ public class MainFrame extends JFrame {
     private int actualDataModel = 0;
 
     private MC_Database mc_db = MC_Database.getDB();
+
+    private Set<String> productsNames, improvementsNames, categoriesNames;
 
     public MainFrame(String title) {
         setTitle(title);
@@ -50,32 +53,32 @@ public class MainFrame extends JFrame {
             }
         };
         datatypes.addMouseListener(selectDataTyps);
-        
+
         add.addActionListener(l -> {
             EditForm ef = null;
 
             switch (actualDataModel) {
-                case 0:                    
-                    ef = new ProductForm(null, mc_db.getImprovements(), mc_db.getCategories());
+                case 0:
+                    ef = new ProductForm(null, mc_db.getImprovements(), mc_db.getCategories(), getProductsNames());
                     break;
                 case 1:
-                    ef = new ImprovementForm(null, mc_db.getCategories());
+                    ef = new ImprovementForm(null, mc_db.getCategories(), getImprovementsNames());
                     break;
                 case 2:
-                    ef = new CategoryForm(null);
+                    ef = new CategoryForm(null, getCategoriesNames());
                     break;
             }
 
             if (ef != null) {
                 setJDialog(ef);
                 if (ef.isConfirmed()) {
-                    ADatabaseEntry ade = ef.getEditedEntry();
+                    IDatabaseEntry ade = ef.getEditedEntry();
                     int usedModel = actualDataModel;
                     Thread load = new Thread(() -> {
                         Object token = mc_db.getNextToken();
 
                         switch (usedModel) {
-                            case 0:                    
+                            case 0:
                                 mc_db.addProduct(ade, token);
                                 break;
                             case 1:
@@ -85,8 +88,8 @@ public class MainFrame extends JFrame {
                                 mc_db.addCategory(ade, token);
                                 break;
                         }
-                        
-                        synchronized(token) {
+
+                        synchronized (token) {
                             try {
                                 token.wait();
                             } catch (Exception e) {
@@ -96,59 +99,65 @@ public class MainFrame extends JFrame {
                         reprintTable(actualDataModel);
                     });
 
-                    load.start();   
+                    load.start();
                 }
             }
-            });
+        });
 
         update.addActionListener(l -> {
             int selectedIndex = dataTable.getSelectedRow();
-            
+
             if (selectedIndex >= 0) {
                 EditForm ef = null;
-                ADatabaseEntry ade = null;
+                IDatabaseEntry ade = null;
 
                 switch (actualDataModel) {
                     case 0:
-                        ade =  mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
-                        
-                        ef = new ProductForm((Product) ade, mc_db.getImprovements(), mc_db.getCategories());
+                        ade = mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
+
+                        ef = new ProductForm((Product) ade, mc_db.getImprovements(), mc_db.getCategories(), getProductsNames());
                         break;
                     case 1:
                         ade = mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
 
-                        ef = new ImprovementForm((Improvement) ade, mc_db.getCategories());
+                        ef = new ImprovementForm((Improvement) ade, mc_db.getCategories(), getImprovementsNames());
                         break;
                     case 2:
                         ade = mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
 
-                        ef = new CategoryForm((Category) ade);
+                        ef = new CategoryForm((Category) ade, getCategoriesNames());
                         break;
                 }
                 if (ef != null) {
                     setJDialog(ef);
                     if (ef.isConfirmed()) {
-                        mc_db.updeteData(ade, null); 
+                        mc_db.updeteData(ade, null);
                         reprintTable(actualDataModel);
                     }
                 }
-            } 
+            }
         });
-    
+
         delete.addActionListener(l -> {
             int selectedIndex = dataTable.getSelectedRow();
-            ADatabaseEntry adtb = null;
-            
+            IDatabaseEntry adtb = null;
+
             if (selectedIndex >= 0) {
                 switch (actualDataModel) {
                     case 0:
-                        adtb = mc_db.removeProduct(mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        adtb = mc_db.removeProduct(
+                                mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))),
+                                null);
                         break;
                     case 1:
-                        adtb = mc_db.removeImprovement(mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        adtb = mc_db.removeImprovement(
+                                mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))),
+                                null);
                         break;
                     case 2:
-                        adtb = mc_db.removeCategory(mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))), null);
+                        adtb = mc_db.removeCategory(
+                                mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))),
+                                null);
                         break;
                 }
 
@@ -159,12 +168,48 @@ public class MainFrame extends JFrame {
         });
     }
 
+    private Set<String> getProductsNames() {
+        if (productsNames == null) {
+            productsNames = new TreeSet<>();
+
+            for (Product p : mc_db.getProducts().values()) {
+                productsNames.add(p.getName());
+            }
+        }
+
+        return productsNames;
+    }
+
+    private Set<String> getImprovementsNames() {
+        if (improvementsNames == null) {
+            improvementsNames = new TreeSet<>();
+
+            for (Improvement i : mc_db.getImprovements().values()) {
+                improvementsNames.add(i.getName());
+            }
+        }
+
+        return improvementsNames;
+    }
+
+    private Set<String> getCategoriesNames() {
+        if (categoriesNames == null) {
+            categoriesNames = new TreeSet<>();
+
+            for (Category c : mc_db.getCategories().values()) {
+                categoriesNames.add(c.getName());
+            }
+        }
+
+        return categoriesNames;
+    }
+
     private void reprintTable(int index) {
         switch (index) {
             case 0:
                 fillProducts();
                 break;
-            case 1: 
+            case 1:
                 fillImprovements();
                 break;
             case 2:
@@ -178,7 +223,7 @@ public class MainFrame extends JFrame {
     private void fillProducts() {
         Map<Integer, Product> data = mc_db.getProducts();
 
-        if (data == null) 
+        if (data == null)
             data = new TreeMap<>();
 
         dataTable.setModel(new MyTableModel(formatProductData(data), Product.getPropertyes()));
@@ -188,20 +233,20 @@ public class MainFrame extends JFrame {
         LinkedList<String[]> data = new LinkedList<>();
 
         for (Product product : products.values()) {
-            String[] row = new String[5]; 
+            String[] row = new String[5];
             row[0] = String.valueOf(product.getId());
             row[1] = product.getName();
             row[2] = String.valueOf(product.getPrice());
             row[3] = mc_db.getCategories().get(product.getCategory()).getName();
-            
+
             data.add(row);
 
             int j = 0;
             for (Integer improvementID : product) {
                 if (j == 0)
-                    row[4] = mc_db.getImprovement(improvementID).getName(); 
-                else 
-                    data.add(new String[] {"","","", "", mc_db.getImprovement(improvementID).getName()});
+                    row[4] = mc_db.getImprovement(improvementID).getName();
+                else
+                    data.add(new String[] { "", "", "", "", mc_db.getImprovement(improvementID).getName() });
 
                 j++;
             }
@@ -210,12 +255,11 @@ public class MainFrame extends JFrame {
         return tooTwoDArr(data);
     }
 
-
     private void fillImprovements() {
         Map<Integer, Improvement> data = MC_Database.getDB().getImprovements();
-        if (data == null) 
+        if (data == null)
             data = new TreeMap<>();
-        
+
         dataTable.setModel(new MyTableModel(formatImprovementData(data), Improvement.getPropertyes()));
     }
 
@@ -223,19 +267,19 @@ public class MainFrame extends JFrame {
         LinkedList<String[]> data = new LinkedList<>();
 
         for (Improvement improvement : improvements.values()) {
-            String[] row = new String[4]; 
+            String[] row = new String[4];
             row[0] = String.valueOf(improvement.getId());
             row[1] = improvement.getName();
             row[2] = String.valueOf(improvement.getPrice());
-            
+
             data.add(row);
 
             int j = 0;
             for (Integer categoryID : improvement) {
                 if (j == 0)
-                    row[3] = MC_Database.getDB().getCategory(categoryID).getName(); 
-                else 
-                    data.add(new String[] {"","","",MC_Database.getDB().getCategory(categoryID).getName()});
+                    row[3] = MC_Database.getDB().getCategory(categoryID).getName();
+                else
+                    data.add(new String[] { "", "", "", MC_Database.getDB().getCategory(categoryID).getName() });
 
                 j++;
             }
@@ -246,7 +290,7 @@ public class MainFrame extends JFrame {
 
     private void fillCategories() {
         Map<Integer, Category> data = MC_Database.getDB().getCategories();
-        if (data == null) 
+        if (data == null)
             data = new TreeMap<>();
 
         dataTable.setModel(new MyTableModel(formatCategoryData(data), Category.getPropertyes()));
@@ -257,10 +301,10 @@ public class MainFrame extends JFrame {
 
         int i = 0;
         for (Category category : categories.values()) {
-            String[] row = new String[2]; 
+            String[] row = new String[2];
             row[0] = String.valueOf(category.getId());
             row[1] = category.getName();
-            
+
             data[i++] = row;
         }
 
@@ -269,7 +313,7 @@ public class MainFrame extends JFrame {
 
     private String[][] tooTwoDArr(LinkedList<String[]> data) {
         String[][] arr = new String[data.size()][];
-        
+
         int i = 0;
         for (String[] strings : data) {
             arr[i] = strings;
@@ -282,17 +326,17 @@ public class MainFrame extends JFrame {
         // naházení komponent na stránku
         container = this.getContentPane();
 
-        container.setLayout(new GridLayout(1,2));
-    
-        datatypes = new JList<>(new String[] {"Produkty", "Vylepšení", "Kategorie"});
+        container.setLayout(new GridLayout(1, 2));
+
+        datatypes = new JList<>(new String[] { "Produkty", "Vylepšení", "Kategorie" });
         datatypesSP = new JScrollPane(datatypes);
 
-        JPanel midPan = new JPanel(new GridLayout(1,3));
+        JPanel midPan = new JPanel(new GridLayout(1, 3));
         dataTable = new JTable();
         dataTableSP = new JScrollPane(dataTable);
         midPan.add(dataTableSP);
 
-        JPanel right = new JPanel(new GridLayout(4,1));
+        JPanel right = new JPanel(new GridLayout(4, 1));
 
         add = new JButton("Přidat");
         update = new JButton("Editovat");
@@ -305,7 +349,7 @@ public class MainFrame extends JFrame {
         midPan.add(new JPanel());
         midPan.add(right);
         midPan.add(new JPanel());
-        
+
         container.add(midPan);
         container.add(dataTableSP);
     }

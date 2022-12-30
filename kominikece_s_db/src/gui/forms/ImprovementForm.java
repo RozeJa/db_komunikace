@@ -6,6 +6,7 @@ import data.db.models.Improvement;
 import javax.swing.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -21,11 +22,14 @@ public class ImprovementForm extends EditForm {
     private JTextField name = new JTextField(12);
     private JTextField price = new JTextField(12);
 
-    public ImprovementForm(Improvement improvement, Map<Integer, Category> categories) {
+    private Set<String> improvementsNames;
+
+    public ImprovementForm(Improvement improvement, Map<Integer, Category> categories, Set<String> improvementsNames) {
         super(improvement);
 
         this.categories = categories;
-        
+        this.improvementsNames = improvementsNames;
+
         initComponents();
         initFunctions();
 
@@ -127,7 +131,7 @@ public class ImprovementForm extends EditForm {
     }
 
     private boolean setData() {
-        if (!name.getText().trim().equals("")) {
+        if (!name.getText().trim().equals("") || !improvementsNames.contains(name.getText().trim())) {
             ((Improvement) editedEntry).setName(name.getText().trim());
         } else 
             return false;

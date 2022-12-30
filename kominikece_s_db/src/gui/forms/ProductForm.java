@@ -7,6 +7,7 @@ import data.db.models.Product;
 import javax.swing.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -25,11 +26,14 @@ public class ProductForm extends EditForm {
     private JTextField price = new JTextField(12);
     private JComboBox<String> category;
 
-    public ProductForm(Product product, Map<Integer, Improvement> improvements, Map<Integer, Category> categories) {
+    private Set<String> productsNames;
+
+    public ProductForm(Product product, Map<Integer, Improvement> improvements, Map<Integer, Category> categories, Set<String> productsNames) {
         super(product);
 
         this.improvements = improvements;
         this.categories = categories;
+        this.productsNames = productsNames;
 
         initComponents();
         initFunctions();
@@ -159,7 +163,7 @@ public class ProductForm extends EditForm {
     }
 
     private boolean setData() {
-        if (!name.getText().trim().equals("")) {
+        if (!name.getText().trim().equals("") || !productsNames.contains(name.getText().trim())) {
             ((Product) editedEntry).setName(name.getText().trim());
         } else 
             return false;

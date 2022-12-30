@@ -1,13 +1,20 @@
 package gui.forms;
 
 import data.db.models.Category;
+
+import java.util.Set;
+
 import javax.swing.*;
 
 public class CategoryForm extends EditForm { 
     private JTextField name = new JTextField(12);
 
-    public CategoryForm(Category category) {
+    private Set<String> categoriesNames;
+
+    public CategoryForm(Category category, Set<String> categoriesNames) {
         super(category);
+
+        this.categoriesNames = categoriesNames;
         
         initComponents();
         initFunctions();
@@ -57,7 +64,7 @@ public class CategoryForm extends EditForm {
     }
 
     private boolean setData() {
-        if (!name.getText().trim().equals("")) {
+        if (!name.getText().trim().equals("") || !categoriesNames.contains(name.getText().trim())) {
             ((Category) editedEntry).setName(name.getText().trim());
         } else 
             return false;
