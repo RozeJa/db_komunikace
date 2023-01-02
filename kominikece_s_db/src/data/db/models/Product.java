@@ -82,7 +82,7 @@ public class Product extends ADatabaseEntry implements Iterable<Integer>, Compos
 
      @Override
      public String getPrimaryKey() {
-          return  ids + " = " + id;
+          return  ids + " = ? ";
      }
      
      @Override
@@ -101,6 +101,13 @@ public class Product extends ADatabaseEntry implements Iterable<Integer>, Compos
           ps.setDouble(2, priceVal);
           ps.setInt(3, categoryId);
           ps.setBoolean(4, availableVal);
+          ps.setInt(5, id);
+          return ps;
+     }
+
+     @Override
+     public PreparedStatement fillDeleteSQL(PreparedStatement ps) throws SQLException {
+          ps.setInt(1, id);
           return ps;
      }
 

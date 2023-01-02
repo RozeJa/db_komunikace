@@ -53,6 +53,10 @@ public class ImprovementInCategory extends ADatabaseEntry implements SubTable, C
     public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
         return fill(ps);
     }
+    @Override
+    public PreparedStatement fillDeleteSQL(PreparedStatement ps) throws SQLException {
+        return fill(ps);
+    }
     
     private PreparedStatement fill(PreparedStatement ps) throws SQLException {
         ps.setInt(1, improvementId);
@@ -74,7 +78,7 @@ public class ImprovementInCategory extends ADatabaseEntry implements SubTable, C
 
     @Override
     public String getPrimaryKey() {
-        return category + " = " + categoryId + " AND " + improvement + " = " + improvementId;
+        return improvement + " = ?  AND " + category + " = ?";
     }
 
     @Override

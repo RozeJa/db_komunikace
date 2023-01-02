@@ -91,14 +91,12 @@ public class Database {
       sqlRequest.append(whereCondition.getCondition());
     }
 
-    PreparedStatement ps = conection.prepareStatement(sqlRequest.toString());
-
-    return getBuilder(ps.executeQuery(), type);
+    return getBuilder(conection.createStatement().executeQuery(sqlRequest.toString()), type);
   }
 
     /**
    * Metoda umožňuje načtení dat z db
-   * @param type instance modelu, může být úplně prázdná, musí rozšiřovat ADatabaseEntry
+   * @param type instance modelu, může být úplně prázdná, musí rozšiřovat IDatabaseEntry
    * @return vrací instanci Buildru pro konkrétní model. Jen nutné dodržet jmenou konvenci: model = Model, builder = ModelBuilder
    * @throws Exception pokud se nepodaří vytvořit Builder
    */
@@ -109,7 +107,7 @@ public class Database {
   /**
    * Metoda vytvoří instanci Buildru a nastavý mu vlastnost typu ResultSet
    * @param rs ResultSet 
-   * @param type instance třídy modelu, musí rozšiřovat ADatabaseEntry
+   * @param type instance třídy modelu, musí rozšiřovat IDatabaseEntry
    * @return vrací instanci Buildru pro konkrétní model. Jen nutné dodržet jmenou konvenci: model = Model, builder = ModelBuilder
    * @throws Exception pokud se nepodaří vytvořit Builder
    */
@@ -123,8 +121,8 @@ public class Database {
 
   /**
    * Metoda pro zapsání instance modelu do databáze
-   * @param entry instance, musí rozšiřovat ADatabaseEntry
-   * @return vrací booleanovou hodnotu, zda se zapsání podařilo
+   * @param entry instance, musí rozšiřovat IDatabaseEntry
+   * @return vrací mapu<název vlastnosti, hodnota vlastnosti> složek primárního klíče
    */
   protected Map<String, ?> create(IDatabaseEntry entry) {
     String sqlRequest = "INSERT INTO " + entry.getTable() + entry.getCreateSQL();
@@ -166,7 +164,8 @@ public class Database {
     String sqlRequest = "DELETE FROM " + entry.getTable() + " WHERE " + entry.getPrimaryKey() + " LIMIT 1";
 
     try (PreparedStatement ps = conection.prepareStatement(sqlRequest)) {
-        return ps.executeUpdate() == 1;
+
+        return entry.fillDeleteSQL(ps).executeUpdate() == 1;
     } catch (Exception e) {
       e.printStackTrace();
 

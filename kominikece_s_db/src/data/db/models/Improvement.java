@@ -82,12 +82,19 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Co
       ps.setString(1, nameVal);
       ps.setDouble(2, priceVal);
       ps.setBoolean(3, availableVal);
+      ps.setInt(4, id);
       return ps;
+   }
+   
+   @Override
+   public PreparedStatement fillDeleteSQL(PreparedStatement ps) throws SQLException {
+        ps.setInt(1, id);
+        return ps;
    }
 
    @Override
    public String getPrimaryKey() {
-       return  ids + " = " + id;
+        return  ids + " = ? ";
    }
 
    @Override

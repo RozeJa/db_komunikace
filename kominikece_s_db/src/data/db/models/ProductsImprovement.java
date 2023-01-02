@@ -53,6 +53,10 @@ public class ProductsImprovement extends ADatabaseEntry implements SubTable {
     public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
         return fill(ps);
     }
+    @Override
+    public PreparedStatement fillDeleteSQL(PreparedStatement ps) throws SQLException {
+        return fill(ps);
+    }
     
     private PreparedStatement fill(PreparedStatement ps) throws SQLException {
         ps.setInt(1, improvementId);
@@ -74,7 +78,7 @@ public class ProductsImprovement extends ADatabaseEntry implements SubTable {
 
     @Override
     public String getPrimaryKey() {
-        return product + " = " + productId + " AND " + improvement + " = " + improvementId;
+        return improvement + " = ?  AND " + product + " = ?"  ;
     }
 
     @Override

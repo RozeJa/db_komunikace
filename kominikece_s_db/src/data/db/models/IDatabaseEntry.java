@@ -56,6 +56,13 @@ public interface IDatabaseEntry {
     */
     PreparedStatement fillCreateSQL(PreparedStatement ps) throws SQLException;
     /**
+     * Metoda doplní do {@param ps} hodnoty, primárního klíče
+    * @param ps připravený dotaz
+    * @return vyplněný připravený dotaz
+    * @throws SQLException pokud nastane chyba při doplňování
+    */
+    PreparedStatement fillDeleteSQL(PreparedStatement ps) throws SQLException;
+    /**
      * Metoda extrahuje z {@param rs} hodnoty klíčů
     * @param rs ResultSet obsahující primární klíč
     * @return vrací mapu<název vlastnosti, hodnota> 

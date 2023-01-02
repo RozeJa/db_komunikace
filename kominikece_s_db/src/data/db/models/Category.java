@@ -51,12 +51,19 @@ public class Category extends ADatabaseEntry {
    public PreparedStatement fillUpdateSQL(PreparedStatement ps) throws SQLException {
       ps.setString(1, nameVal);
       ps.setBoolean(2, availableVal);
+      ps.setInt(3, id);
       return ps;
+   }
+   
+   @Override
+   public PreparedStatement fillDeleteSQL(PreparedStatement ps) throws SQLException {
+        ps.setInt(1, id);
+        return ps;
    }
 
    @Override
    public String getPrimaryKey() {
-       return  ids + " = " + id;
+        return  ids + " = ? ";
    }
 
    @Override
