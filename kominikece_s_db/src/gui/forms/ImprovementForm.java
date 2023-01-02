@@ -24,8 +24,12 @@ public class ImprovementForm extends EditForm {
 
     private Set<String> improvementsNames;
 
+    private boolean updated;
+
     public ImprovementForm(Improvement improvement, Map<Integer, Category> categories, Set<String> improvementsNames) {
         super(improvement);
+
+        updated = improvement != null;
 
         this.categories = categories;
         this.improvementsNames = improvementsNames;
@@ -139,7 +143,7 @@ public class ImprovementForm extends EditForm {
     }
 
     private boolean setData() {
-        if (!name.getText().trim().equals("") || !improvementsNames.contains(name.getText().trim())) {
+        if (!name.getText().trim().equals("") && (!improvementsNames.contains(name.getText().trim()) || updated)) {
             ((Improvement) editedEntry).setName(name.getText().trim());
         } else 
             return false;

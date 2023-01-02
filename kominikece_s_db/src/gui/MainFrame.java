@@ -80,12 +80,15 @@ public class MainFrame extends JFrame {
                         switch (usedModel) {
                             case 0:
                                 mc_db.addProduct(ade, token);
+                                productsNames.add(((Product) ade).getName());
                                 break;
                             case 1:
                                 mc_db.addImprovement(ade, token);
+                                improvementsNames.add(((Improvement) ade).getName());
                                 break;
                             case 2:
                                 mc_db.addCategory(ade, token);
+                                categoriesNames.add(((Category) ade).getName());
                                 break;
                         }
 
@@ -112,19 +115,26 @@ public class MainFrame extends JFrame {
                 EditForm ef = null;
                 IDatabaseEntry ade = null;
 
+                int rightIndex = selectedIndex;
+
+                while (((String) dataTable.getValueAt(rightIndex, 0)).equals("")) {
+                    rightIndex--;
+                }
+
+
                 switch (actualDataModel) {
                     case 0:
-                        ade = mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
+                        ade = mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(rightIndex, 0)));
 
                         ef = new ProductForm((Product) ade, mc_db.getImprovements(), mc_db.getCategories(), getProductsNames());
                         break;
                     case 1:
-                        ade = mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
+                        ade = mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(rightIndex, 0)));
 
                         ef = new ImprovementForm((Improvement) ade, mc_db.getCategories(), getImprovementsNames());
                         break;
                     case 2:
-                        ade = mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0)));
+                        ade = mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(rightIndex, 0)));
 
                         ef = new CategoryForm((Category) ade, getCategoriesNames());
                         break;
@@ -144,20 +154,23 @@ public class MainFrame extends JFrame {
             IDatabaseEntry adtb = null;
 
             if (selectedIndex >= 0) {
+                int rightIndex = selectedIndex;
+
+                while (((String) dataTable.getValueAt(rightIndex, 0)).equals("")) {
+                    rightIndex--;
+                }
+
                 switch (actualDataModel) {
                     case 0:
-                        adtb = mc_db.removeProduct(
-                                mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))),
+                        adtb = mc_db.removeProduct(mc_db.getProduct(Integer.parseInt((String) dataTable.getValueAt(rightIndex, 0))),
                                 null);
                         break;
                     case 1:
-                        adtb = mc_db.removeImprovement(
-                                mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))),
+                        adtb = mc_db.removeImprovement(mc_db.getImprovement(Integer.parseInt((String) dataTable.getValueAt(rightIndex, 0))),
                                 null);
                         break;
                     case 2:
-                        adtb = mc_db.removeCategory(
-                                mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(selectedIndex, 0))),
+                        adtb = mc_db.removeCategory(mc_db.getCategory(Integer.parseInt((String) dataTable.getValueAt(rightIndex, 0))),
                                 null);
                         break;
                 }
@@ -244,12 +257,18 @@ public class MainFrame extends JFrame {
 
             int j = 0;
             for (Integer improvementID : product) {
-                if (j == 0)
-                    row[4] = mc_db.getImprovement(improvementID).getName();
-                else
-                    data.add(new String[] { "", "", "", "", mc_db.getImprovement(improvementID).getName() });
+                Improvement i = mc_db.getImprovement(improvementID);
 
-                j++;
+                if (i != null) {
+                    if (i.getCategories().contains(product.getCategory())) {
+                        if (j == 0)
+                            row[4] = i.getName();
+                        else
+                            data.add(new String[] { "", "", "", "", i.getName()});
+
+                        j++;                        
+                    }
+                }
             }
         }
 
@@ -277,12 +296,16 @@ public class MainFrame extends JFrame {
 
             int j = 0;
             for (Integer categoryID : improvement) {
-                if (j == 0)
-                    row[3] = MC_Database.getDB().getCategory(categoryID).getName();
-                else
-                    data.add(new String[] { "", "", "", MC_Database.getDB().getCategory(categoryID).getName() });
+                Category c = mc_db.getCategory(categoryID);
 
-                j++;
+                if (c != null) {
+                    if (j == 0)
+                        row[3] =c.getName();
+                    else
+                        data.add(new String[] { "", "", "", c.getName()});
+
+                    j++;                    
+                }
             }
         }
 

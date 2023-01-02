@@ -180,7 +180,7 @@ public class MC_Database extends Database {
     public void addProduct(IDatabaseEntry product, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread(products, product, requestToken));
+        Thread creatThread = new Thread(new CreateThread(products, product, requestToken, token));
 
         creatThread.start();
 
@@ -223,7 +223,7 @@ public class MC_Database extends Database {
     public void addCategory(IDatabaseEntry category, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread(categories, category, requestToken));
+        Thread creatThread = new Thread(new CreateThread(categories, category, requestToken, token));
 
         creatThread.start();
 
@@ -266,7 +266,7 @@ public class MC_Database extends Database {
     public void addImprovement(IDatabaseEntry improvement, Object token) {
         Object requestToken = requester.getNextToken();
 
-        Thread creatThread = new Thread(new CreateThread(improvements, improvement, requestToken));
+        Thread creatThread = new Thread(new CreateThread(improvements, improvement, requestToken, token));
 
         creatThread.start();
 
@@ -433,20 +433,20 @@ public class MC_Database extends Database {
                 }
             });
             t.start();
-        }   
-        
+        }        
     }
 
     private class CreateThread implements Runnable {
 
-        private Object requestToken;
+        private Object requestToken, token;
         private IDatabaseEntry created;
         private Map<Integer, IDatabaseEntry> coll;
 
-        public CreateThread(Map<Integer, ? extends IDatabaseEntry> coll, IDatabaseEntry created, Object requestToken) {
+        public CreateThread(Map<Integer, ? extends IDatabaseEntry> coll, IDatabaseEntry created, Object requestToken, Object token) {
             this.requestToken = requestToken;
             this.created = created;
             this.coll = (Map<Integer, IDatabaseEntry>) coll;
+            this.token = token;
         }
 
         @Override
@@ -465,9 +465,16 @@ public class MC_Database extends Database {
                 }
             }
 
-            synchronized(created) {
-                created.notifyAll();
+            if (created instanceof Composite) {
+                synchronized(created) {
+                    created.notifyAll();
+                }                
+            } else {
+                synchronized(token) {
+                    token.notifyAll();
+                }                 
             }
+
         }
     }
 }

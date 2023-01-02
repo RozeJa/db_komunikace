@@ -28,8 +28,12 @@ public class ProductForm extends EditForm {
 
     private Set<String> productsNames;
 
+    private boolean updated;
+
     public ProductForm(Product product, Map<Integer, Improvement> improvements, Map<Integer, Category> categories, Set<String> productsNames) {
         super(product);
+
+        updated = product != null;
 
         this.improvements = improvements;
         this.categories = categories;
@@ -171,7 +175,7 @@ public class ProductForm extends EditForm {
     }
 
     private boolean setData() {
-        if (!name.getText().trim().equals("") || !productsNames.contains(name.getText().trim())) {
+        if (!name.getText().trim().equals("") && (!productsNames.contains(name.getText().trim()) || updated)) {
             ((Product) editedEntry).setName(name.getText().trim());
         } else 
             return false;
