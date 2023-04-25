@@ -2,12 +2,13 @@ package data.db.buildesr;
 
 import java.sql.SQLException;
 
-import data.db.models.ADatabaseEntry;
-import data.db.models.Category;
+import data.db.models.ADatabaseEntity;
+import data.db.models.CategoryEntity;
 
 public class CategoryBuilder extends ABuilder {
     @Override
-    public Category build() throws SQLException {
-        return new Category(rs.getInt(ADatabaseEntry.ids), rs.getString(Category.name), rs.getBoolean(ADatabaseEntry.available));
+    public CategoryEntity build() throws SQLException {
+        return new CategoryEntity(rs.getInt(ADatabaseEntity.ids), rs.getString(CategoryEntity.name),
+                rs.getBoolean(ADatabaseEntity.available));
     }
 }

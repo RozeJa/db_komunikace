@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProductsImprovement extends ADatabaseEntry implements SubTable {
+public class ProductsImprovement extends ADatabaseEntity implements SubTable {
     private int productId, improvementId;
 
     public static final String product = "produkt", improvement = "vylepseni";

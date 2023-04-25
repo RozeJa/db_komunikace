@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImprovementInCategory extends ADatabaseEntry implements SubTable, Comparable<ImprovementInCategory> {
+public class ImprovementInCategory extends ADatabaseEntity implements SubTable, Comparable<ImprovementInCategory> {
     private int improvementId, categoryId;
 
     public static final String improvement = "vylepseni", category = "kategorie";

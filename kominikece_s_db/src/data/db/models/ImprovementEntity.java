@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Composite {
+public class ImprovementEntity extends ADatabaseEntity implements Iterable<Integer>, Composite {
 
    public static final String name = "nazev", price = "cena";
 
@@ -16,14 +16,14 @@ public class Improvement extends ADatabaseEntry implements Iterable<Integer>, Co
    private String nameVal;
    private double priceVal;
 
-   public Improvement(int id, String name, double price, boolean availableVal) {
+   public ImprovementEntity(int id, String name, double price, boolean availableVal) {
       nameVal = name;
       priceVal = price;
 
       this.availableVal = availableVal;
       this.id = id;
    }
-   public Improvement() {}
+   public ImprovementEntity() {}
 
    public void setPrice(double price) {
       priceVal = price;

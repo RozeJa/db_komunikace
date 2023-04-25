@@ -8,12 +8,12 @@ import java.util.TreeSet;
 
 import data.Setting;
 import data.db.models.IDatabaseEntry;
-import data.db.models.ADatabaseEntry;
-import data.db.models.Category;
+import data.db.models.ADatabaseEntity;
+import data.db.models.CategoryEntity;
 import data.db.models.Composite;
-import data.db.models.Improvement;
+import data.db.models.ImprovementEntity;
 import data.db.models.ImprovementInCategory;
-import data.db.models.Product;
+import data.db.models.ProductEntity;
 import data.db.models.ProductsImprovement;
 import data.db.models.SubTable;
 
@@ -62,19 +62,19 @@ public class MC_Database extends Database {
 
     // ###################################################################//
 
-    private Map<Integer, Product> products = null;
-    private Map<Integer, Category> categories = null;
-    private Map<Integer, Improvement> improvements = null;
+    private Map<Integer, ProductEntity> products = null;
+    private Map<Integer, CategoryEntity> categories = null;
+    private Map<Integer, ImprovementEntity> improvements = null;
 
     private Runnable loadCategory = () -> {
         categories = new TreeMap<>();
 
         try {
-            for (IDatabaseEntry c : read(new Category())) {
+            for (IDatabaseEntry c : read(new CategoryEntity())) {
                 if (c.isAvailable()) {
                     synchronized (categories) {
-                        categories.put(c.getId(), ((Category) c));
-                    }                    
+                        categories.put(c.getId(), ((CategoryEntity) c));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -91,11 +91,11 @@ public class MC_Database extends Database {
         }
 
         try {
-            for (IDatabaseEntry i : read(new Improvement())) {
+            for (IDatabaseEntry i : read(new ImprovementEntity())) {
                 if (i.isAvailable()) {
                     synchronized (improvements) {
-                        improvements.put(i.getId(), ((Improvement) i));
-                    }                    
+                        improvements.put(i.getId(), ((ImprovementEntity) i));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -112,8 +112,8 @@ public class MC_Database extends Database {
         try {
             for (IDatabaseEntry iic : read(new ImprovementInCategory())) {
                 synchronized (improvements) {
-                    Improvement i = improvements.get(((ImprovementInCategory) iic).getImprovementId());
-                    Category c = categories.get(((ImprovementInCategory) iic).getCategoryId());
+                    ImprovementEntity i = improvements.get(((ImprovementInCategory) iic).getImprovementId());
+                    CategoryEntity c = categories.get(((ImprovementInCategory) iic).getCategoryId());
                     if (c != null && i != null) {
                         if (i.isAvailable() && c.isAvailable())
                             i.addCategories(c.getId());
@@ -126,7 +126,7 @@ public class MC_Database extends Database {
     };
     private Runnable loadProduct = () -> {
         products = new TreeMap<>();
-        
+
         Thread improvementLoad = null;
         if (improvements == null) {
             improvementLoad = new Thread(loadImprovement);
@@ -134,11 +134,11 @@ public class MC_Database extends Database {
         }
 
         try {
-            for (IDatabaseEntry p : read(new Product())) {
+            for (IDatabaseEntry p : read(new ProductEntity())) {
                 if (p.isAvailable()) {
                     synchronized (products) {
-                        products.put(p.getId(), ((Product) p));
-                    }                    
+                        products.put(p.getId(), ((ProductEntity) p));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -155,8 +155,8 @@ public class MC_Database extends Database {
         try {
             for (IDatabaseEntry pi : read(new ProductsImprovement())) {
                 synchronized (products) {
-                    Product p = products.get(((ProductsImprovement) pi).getProductId());
-                    Improvement i = improvements.get(((ProductsImprovement) pi).getImprovementId());
+                    ProductEntity p = products.get(((ProductsImprovement) pi).getProductId());
+                    ImprovementEntity i = improvements.get(((ProductsImprovement) pi).getImprovementId());
                     if (p != null && i != null) {
                         if (p.isAvailable() && i.isAvailable())
                             p.addImprovement(((ProductsImprovement) pi).getImprovementId(), i.getCategories());
@@ -169,7 +169,7 @@ public class MC_Database extends Database {
     };
 
     // Akce s produkty
-    public Map<Integer, Product> getProducts() {
+    public Map<Integer, ProductEntity> getProducts() {
         if (products == null) {
             loadProducts();
         }
@@ -187,19 +187,19 @@ public class MC_Database extends Database {
         create(product, requestToken, token);
     }
 
-    public Product removeProduct(Product product, Object token) {
-        if (product == null) 
+    public ProductEntity removeProduct(ProductEntity product, Object token) {
+        if (product == null)
             return null;
 
         product.setAvailable(false);
         updeteData(product, token);
 
-        synchronized(products) {
+        synchronized (products) {
             return products.remove(product.getId());
         }
     }
 
-    public Product getProduct(Integer id) {
+    public ProductEntity getProduct(Integer id) {
         synchronized (products) {
             return products.get(id);
         }
@@ -212,7 +212,7 @@ public class MC_Database extends Database {
     }
 
     // Akce s kategoriemi
-    public Map<Integer, Category> getCategories() {
+    public Map<Integer, CategoryEntity> getCategories() {
         if (categories == null) {
             loadCategories();
         }
@@ -230,19 +230,19 @@ public class MC_Database extends Database {
         create(category, requestToken, token);
     }
 
-    public Category removeCategory(Category category, Object token) {
+    public CategoryEntity removeCategory(CategoryEntity category, Object token) {
         if (category == null)
             return null;
 
         category.setAvailable(false);
         updeteData(category, token);
 
-        synchronized(categories) {
+        synchronized (categories) {
             return categories.remove(category.getId());
         }
     }
 
-    public Category getCategory(Integer id) {
+    public CategoryEntity getCategory(Integer id) {
         synchronized (categories) {
             return categories.get(id);
         }
@@ -255,7 +255,7 @@ public class MC_Database extends Database {
     }
 
     // Akce s vylepšenímy
-    public Map<Integer, Improvement> getImprovements() {
+    public Map<Integer, ImprovementEntity> getImprovements() {
         if (improvements == null) {
             loadImprevements();
         }
@@ -273,19 +273,19 @@ public class MC_Database extends Database {
         create(improvement, requestToken, token);
     }
 
-    public Improvement removeImprovement(Improvement improvement, Object token) {
+    public ImprovementEntity removeImprovement(ImprovementEntity improvement, Object token) {
         if (improvement == null)
             return null;
 
         improvement.setAvailable(false);
         updeteData(improvement, token);
 
-        synchronized(improvements) {
+        synchronized (improvements) {
             return improvements.remove(improvement.getId());
         }
     }
 
-    public Improvement getImprovement(Integer id) {
+    public ImprovementEntity getImprovement(Integer id) {
         synchronized (improvements) {
             return improvements.get(id);
         }
@@ -314,9 +314,12 @@ public class MC_Database extends Database {
 
             Thread updateThread = new Thread(() -> {
 
-                Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry).getComponents();
+                Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry)
+                        .getComponents();
                 for (SubTable subTableObj : components.keySet()) {
-                    WhereCondition wc = new WhereCondition(WhereCondition.Operator.NON.toString(), String.valueOf(aDatabaseEntry.getId()), subTableObj.getOwnerIdPropertyName(), WhereCondition.OperationOperator.EQUAL.toString());
+                    WhereCondition wc = new WhereCondition(WhereCondition.Operator.NON.toString(),
+                            String.valueOf(aDatabaseEntry.getId()), subTableObj.getOwnerIdPropertyName(),
+                            WhereCondition.OperationOperator.EQUAL.toString());
 
                     Set<Integer> dbVals = new TreeSet<>();
                     try {
@@ -329,24 +332,24 @@ public class MC_Database extends Database {
                             } else {
                                 dbVals.add(((SubTable) sto).getOwnedId());
                             }
-                        }   
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    
-                    // projeď to co instance má 
-                    // pokud to není v db přidej to tam 
+
+                    // projeď to co instance má
+                    // pokud to není v db přidej to tam
                     // pokud to v db je je to v pohodě
                     for (Integer subId : components.get(subTableObj)) {
                         if (!dbVals.contains(subId)) {
                             try {
                                 // naklanuj si vzorový objekt
                                 SubTable subTableObjClon = (SubTable) subTableObj.clone();
-                                
+
                                 // dosaď informace
                                 subTableObjClon.setOwnedId(subId);
                                 subTableObjClon.setOwnerId(aDatabaseEntry.getId());
-        
+
                                 // zavolej uložení
                                 requester.addRequest(new SQLRequest(SQLRequest.create, subTableObjClon, null));
                             } catch (Exception e) {
@@ -393,13 +396,17 @@ public class MC_Database extends Database {
     public void create(IDatabaseEntry aDatabaseEntry, Object requestToken, Object token) {
         requester.addRequest(new SQLRequest(SQLRequest.create, aDatabaseEntry, requestToken));
 
-        // poku se má zapsat do db nová hodnota je nejprve třeba zjistut, zda se mají zapset data i do jiné tabulky
-        // příklad produkt má může mít více vylepšení a vylepšení může být u více produktů 
-        // Rozhranní Composite implementují právě takové Modely, které potřebují podobným způsobem mapovat data
+        // poku se má zapsat do db nová hodnota je nejprve třeba zjistut, zda se mají
+        // zapset data i do jiné tabulky
+        // příklad produkt má může mít více vylepšení a vylepšení může být u více
+        // produktů
+        // Rozhranní Composite implementují právě takové Modely, které potřebují
+        // podobným způsobem mapovat data
         if (aDatabaseEntry instanceof Composite) {
             Thread t = new Thread(() -> {
                 // získej všechny tabulky, které je třeba vytvořit
-                Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry).getComponents();
+                Map<SubTable, Set<Integer>> components = (Map<SubTable, Set<Integer>>) ((Composite) aDatabaseEntry)
+                        .getComponents();
                 // projdi každou tabulku
                 for (SubTable subTableObj : components.keySet()) {
                     // a každou hodnotu v tabulce
@@ -407,11 +414,11 @@ public class MC_Database extends Database {
                         try {
                             // naklanuj si vzorový objekt
                             SubTable subTableObjClon = (SubTable) subTableObj.clone();
-                            
+
                             // dosaď informace
                             subTableObjClon.setOwnedId(subId);
                             // počkej dokud nebude mít id
-                            synchronized(aDatabaseEntry) {
+                            synchronized (aDatabaseEntry) {
                                 while (aDatabaseEntry.getId() == 0) {
                                     try {
                                         aDatabaseEntry.wait();
@@ -428,12 +435,12 @@ public class MC_Database extends Database {
                         }
                     }
                 }
-                synchronized(token) {
+                synchronized (token) {
                     token.notifyAll();
                 }
             });
             t.start();
-        }        
+        }
     }
 
     private class CreateThread implements Runnable {
@@ -442,7 +449,8 @@ public class MC_Database extends Database {
         private IDatabaseEntry created;
         private Map<Integer, IDatabaseEntry> coll;
 
-        public CreateThread(Map<Integer, ? extends IDatabaseEntry> coll, IDatabaseEntry created, Object requestToken, Object token) {
+        public CreateThread(Map<Integer, ? extends IDatabaseEntry> coll, IDatabaseEntry created, Object requestToken,
+                Object token) {
             this.requestToken = requestToken;
             this.created = created;
             this.coll = (Map<Integer, IDatabaseEntry>) coll;
@@ -451,7 +459,7 @@ public class MC_Database extends Database {
 
         @Override
         public void run() {
-            synchronized(requestToken) {
+            synchronized (requestToken) {
                 try {
                     requestToken.wait();
                 } catch (Exception e) {
@@ -459,20 +467,20 @@ public class MC_Database extends Database {
 
                 SQLResponce responce = requester.getResponce(requestToken);
 
-                created.setId((Integer) responce.getPrimaryKey().get(ADatabaseEntry.ids));
-                synchronized(coll) {
-                    coll.put((Integer) responce.getPrimaryKey().get(ADatabaseEntry.ids), created);
+                created.setId((Integer) responce.getPrimaryKey().get(ADatabaseEntity.ids));
+                synchronized (coll) {
+                    coll.put((Integer) responce.getPrimaryKey().get(ADatabaseEntity.ids), created);
                 }
             }
 
             if (created instanceof Composite) {
-                synchronized(created) {
+                synchronized (created) {
                     created.notifyAll();
-                }                
+                }
             } else {
-                synchronized(token) {
+                synchronized (token) {
                     token.notifyAll();
-                }                 
+                }
             }
 
         }

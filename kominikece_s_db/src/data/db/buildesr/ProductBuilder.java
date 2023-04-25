@@ -2,12 +2,12 @@ package data.db.buildesr;
 
 import java.sql.SQLException;
 
-import data.db.models.ADatabaseEntry;
-import data.db.models.Product;
+import data.db.models.ADatabaseEntity;
+import data.db.models.ProductEntity;
 
 public class ProductBuilder extends ABuilder {
     @Override
-    public Product build() throws SQLException {
-        return new Product(rs.getInt(ADatabaseEntry.ids), rs.getString(Product.name), rs.getDouble(Product.price), rs.getInt(Product.category), rs.getBoolean(ADatabaseEntry.available));
+    public ProductEntity build() throws SQLException {
+        return new ProductEntity(rs.getInt(ADatabaseEntity.ids), rs.getString(ProductEntity.name), rs.getDouble(ProductEntity.price), rs.getInt(ProductEntity.category), rs.getBoolean(ADatabaseEntity.available));
     }
 }

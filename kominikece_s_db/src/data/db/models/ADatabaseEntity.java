@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Třída je předken všech modelů, které reprezentují data v databázi
-public abstract class ADatabaseEntry implements IDatabaseEntry {
+public abstract class ADatabaseEntity implements IDatabaseEntry {
    // definuje vlastnosti používané u velkého množství modelů
    protected int id = 0;
    protected boolean availableVal;

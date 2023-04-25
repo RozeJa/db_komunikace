@@ -3,18 +3,18 @@ package data.db.models;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Category extends ADatabaseEntry {
+public class CategoryEntity extends ADatabaseEntity {
 
    public static final String name = "nazev";
    private String nameVal;
 
-   public Category(int id, String name, boolean availableVal) {
+   public CategoryEntity(int id, String name, boolean availableVal) {
       nameVal = name;
 
       this.availableVal = availableVal;
       this.id = id;
    }
-   public Category() {}
+   public CategoryEntity() {}
 
    public void setName(String name) {
       nameVal = name;

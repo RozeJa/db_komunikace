@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 
-public class Product extends ADatabaseEntry implements Iterable<Integer>, Composite {
+public class ProductEntity extends ADatabaseEntity implements Iterable<Integer>, Composite {
 
      public static final String name = "nazev", price = "cena", category = "kategorie";
    
@@ -18,7 +18,7 @@ public class Product extends ADatabaseEntry implements Iterable<Integer>, Compos
      private String nameVal;
      private double priceVal;
 
-     public Product(int id, String name, double price, int categoryId, boolean availableVal) {
+     public ProductEntity(int id, String name, double price, int categoryId, boolean availableVal) {
           nameVal = name;
           priceVal = price;
           this.categoryId = categoryId;
@@ -26,7 +26,7 @@ public class Product extends ADatabaseEntry implements Iterable<Integer>, Compos
           this.availableVal = availableVal;
           this.id = id;
      }
-     public Product() {}
+     public ProductEntity() {}
    
 
      public void setPrice(double price) {
